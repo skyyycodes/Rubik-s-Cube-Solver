@@ -1,0 +1,68 @@
+name: Build Executables
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact_name: RubiksCubeSolver.exe
+            pyinstaller_args: --onefile --name RubiksCubeSolver
+          - os: macos-latest
+            artifact_name: RubiksCubeSolver.app
+            pyinstaller_args: --onefile --windowed --name RubiksCubeSolver
+          - os: ubuntu-latest
+            artifact_name: RubiksCubeSolver
+            pyinstaller_args: --onefile --name RubiksCubeSolver
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install kociemba package
+        run: |
+          cd kociemba
+          pip install -e .
+
+      - name: Build executable
+        run: |
+          pyinstaller ${{ matrix.pyinstaller_args }} --add-data "kociemba/kociemba/cprunetables${{ runner.os == 'Windows' && ';' || ':' }}kociemba/cprunetables" main.py
+
+      - name: Upload artifact (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: RubiksCubeSolver-Windows
+          path: dist/RubiksCubeSolver.exe
+
+      - name: Upload artifact (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: RubiksCubeSolver-macOS
+          path: dist/RubiksCubeSolver.app
+
+      - name: Upload artifact (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: RubiksCubeSolver-Linux
+          path: dist/RubiksCubeSolver

@@ -1,6 +1,14 @@
 import cffi
+import sys
 
 ffi = cffi.FFI()
+
+# Platform-specific compiler flags
+if sys.platform == 'win32':
+    extra_compile_args = []
+else:
+    extra_compile_args = ['-std=c99', '-O3', '-D_XOPEN_SOURCE=700']
+
 ffi.set_source(
     "kociemba.ckociembawrapper",
     """
@@ -34,7 +42,7 @@ ffi.set_source(
         'kociemba/ckociemba/facecube.c',
         'kociemba/ckociemba/search.c'
     ],
-    extra_compile_args=['-std=c99', '-O3', '-D_XOPEN_SOURCE=700']
+    extra_compile_args=extra_compile_args
 )
 
 ffi.cdef("char* solve(char *cubestring, char *patternstring, char *cache_dir, int max_depth);")
