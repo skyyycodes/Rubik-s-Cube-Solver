@@ -1,6 +1,6 @@
-opencv-python
+streamlit
+opencv-python-headless
 numpy
 matplotlib
 cffi>=1.0.0
 future
-pyinstaller
