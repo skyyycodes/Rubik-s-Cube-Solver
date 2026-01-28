@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 import color_detect
 import maker
-from kociemba import kociemba
+import kociemba
 
 st.set_page_config(
     page_title="Rubik's Cube Solver",
