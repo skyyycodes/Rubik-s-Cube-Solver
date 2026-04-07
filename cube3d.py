@@ -21,9 +21,34 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.patches as mpatches
 from matplotlib.widgets import Button
-from kociemba import kociemba
-from kociemba.kociemba.pykociemba.facecube import FaceCube
-from kociemba.kociemba.pykociemba.cubiecube import moveCube
+
+try:
+    # Repository layout: ./kociemba/kociemba exposes the enhanced solver.
+    from kociemba.kociemba import solve as kociemba_solve
+except ImportError:
+    # Fallback for pip package that exports solve at top-level.
+    from kociemba import solve as kociemba_solve
+
+
+def solve_cube_compat(cube_string):
+    """Solve with enhanced args when available; fall back to basic API."""
+    try:
+        return kociemba_solve(
+            cube_string,
+            max_phase1_solutions=5,
+            time_budget_sec=0.5,
+        )
+    except TypeError:
+        return kociemba_solve(cube_string)
+
+try:
+    # Local source layout in this repository
+    from kociemba.kociemba.pykociemba.facecube import FaceCube
+    from kociemba.kociemba.pykociemba.cubiecube import moveCube
+except ImportError:
+    # pip-installed package layout
+    from kociemba.pykociemba.facecube import FaceCube
+    from kociemba.pykociemba.cubiecube import moveCube
 
 
 class RubiksCube3D:
@@ -459,6 +484,7 @@ class RubiksCube3D:
             "1-6: Set color",
             "Enter: SOLVE",
             "N: Next solution step (updates cube)",
+            "S: Random scramble",
             "R: Reset | G: Guide mode",
             "Q: Quit"
         ]
@@ -551,7 +577,7 @@ class RubiksCube3D:
             return None, f"Color count error: {', '.join(f'{c}={counts[c]}' for c in bad_colors)}"
 
         try:
-            solution = kociemba.solve(cube_string)
+            solution = solve_cube_compat(cube_string)
 
             # Store parsed moves for step-by-step guidance
             self.solution_moves = solution.split()
@@ -566,6 +592,48 @@ class RubiksCube3D:
             self.base_cube_string = None
             self.playback_cube_string = None
             return None, str(e)
+
+    def randomize(self):
+        """Generate a valid random cube state by applying random moves to a solved cube."""
+        # Reset to solved state first to ensure correct center mapping
+        self.faces = {
+            'U': [['white']*3 for _ in range(3)],
+            'D': [['yellow']*3 for _ in range(3)],
+            'F': [['blue']*3 for _ in range(3)],
+            'B': [['green']*3 for _ in range(3)],
+            'R': [['red']*3 for _ in range(3)],
+            'L': [['orange']*3 for _ in range(3)]
+        }
+
+        # Build letter_to_color mapping from solved centers
+        solved = self.to_kociemba_string()
+
+        # Apply 20-30 random moves to scramble
+        move_faces = ['U', 'R', 'F', 'D', 'L', 'B']
+        suffixes = ['', "'", '2']
+
+        cube_string = solved
+        num_moves = np.random.randint(20, 31)
+        last_face = None
+        for _ in range(num_moves):
+            available = [m for m in move_faces if m != last_face]
+            face = available[np.random.randint(len(available))]
+            suffix = suffixes[np.random.randint(len(suffixes))]
+            move = face + suffix
+            cube_string = self._apply_kociemba_move_to_string(cube_string, move)
+            last_face = face
+
+        # Update the UI faces from the scrambled state
+        self._update_faces_from_cube_string(cube_string)
+
+        # Clear any previous solution
+        self.solution_moves = []
+        self.current_move_index = -1
+        self.base_cube_string = None
+        self.playback_cube_string = None
+
+        self.message = f"Random scramble applied ({num_moves} moves). Press Enter to solve!"
+        self.message_color = 'blue'
 
     def set_sticker_color(self, face, row, col, color):
         """Set a sticker's color (except centers)"""
@@ -724,6 +792,9 @@ class RubiksCube3D:
             self.current_move_index = -1
             self.base_cube_string = None
             self.playback_cube_string = None
+        elif event.key == 's':
+            # Generate random scramble
+            self.randomize()
         elif event.key == 'g':
             # Toggle guided mode
             self.guided_mode = not self.guided_mode
@@ -812,7 +883,7 @@ class RubiksCube3D:
 
         # Create grid layout
         gs = self.fig.add_gridspec(3, 3, width_ratios=[1.2, 1.2, 0.8],
-                                   height_ratios=[1, 0.3, 0.1],
+                                   height_ratios=[1, 0.25, 0.05],
                                    hspace=0.3, wspace=0.2)
 
         # 3D cube view
@@ -827,9 +898,13 @@ class RubiksCube3D:
         # Color palette (spans bottom)
         self.ax_palette = self.fig.add_subplot(gs[1, :2])
 
-        # Add solve button
-        ax_button = self.fig.add_subplot(gs[1, 2])
-        ax_button.axis('off')
+        # Add small random scramble button at the bottom-right
+        ax_btn_random = self.fig.add_axes([0.82, 0.05, 0.1, 0.04])
+        self.btn_random = Button(ax_btn_random, 'Random Scramble',
+                                 color='#E8E8FF', hovercolor='#C0C0FF')
+        ax_btn_random.text(0.5, 0.5, '', fontsize=8, ha='center', va='center')
+        self.btn_random.label.set_fontsize(8)
+        self.btn_random.on_clicked(lambda event: (self.randomize(), self.draw_all()))
 
         # Connect events
         self.fig.canvas.mpl_connect('key_press_event', self.on_key)

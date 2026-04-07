@@ -1,0 +1,78 @@
+{
+  "baseline": {
+    "label": "Baseline",
+    "max_phase1": 1,
+    "neural_strategy": "none",
+    "total_scrambles": 50,
+    "successful": 49,
+    "move_stats": {
+      "mean": 20.510204081632654,
+      "median": 21,
+      "stdev": 0.9600878644598072,
+      "min": 19,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 434.8713816428671,
+      "median_ms": 336.32802963256836,
+      "max_ms": 1752.5579929351807,
+      "p95_ms": 1053.008794784546,
+      "p99_ms": 1595.4771041870117
+    },
+    "distribution": {
+      "optimal_20": 22,
+      "near_optimal_18": 0,
+      "good_21": 42
+    },
+    "node_stats": {
+      "mean_nodes": 672912.9591836735,
+      "median_nodes": 526838,
+      "mean_phase1_nodes": 581590.224489796,
+      "mean_phase2_nodes": 91322.73469387754
+    }
+  },
+  "improved": {
+    "label": "Multi-5",
+    "max_phase1": 5,
+    "neural_strategy": "none",
+    "total_scrambles": 50,
+    "successful": 49,
+    "move_stats": {
+      "mean": 20.06122448979592,
+      "median": 20,
+      "stdev": 0.87578924560712,
+      "min": 19,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 31132.85072482362,
+      "median_ms": 932.1999549865723,
+      "max_ms": 536922.2099781036,
+      "p95_ms": 5000.195026397705,
+      "p99_ms": 535831.1820030212
+    },
+    "distribution": {
+      "optimal_20": 35,
+      "near_optimal_18": 0,
+      "good_21": 46
+    },
+    "node_stats": {
+      "mean_nodes": 2918403.5714285714,
+      "median_nodes": 1118746,
+      "mean_phase1_nodes": 2795440.836734694,
+      "mean_phase2_nodes": 122962.73469387754
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-03-02T13:28:43.874343",
+    "scrambles": 50,
+    "seed": 42,
+    "timeout_ms": 5000,
+    "time_budget_sec": null,
+    "use_neural": false,
+    "neural_strategy": "none",
+    "neural_prob": 0.5,
+    "neural_depth_cutoff": 5,
+    "hard_cases": true
+  }
+}

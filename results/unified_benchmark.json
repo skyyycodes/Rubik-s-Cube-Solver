@@ -1,0 +1,249 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-05T22:13:22.125272",
+    "scrambles": 200,
+    "seed": 42,
+    "include_k10": true,
+    "total_time_sec": 3112,
+    "python_version": "3.14.2 (v3.14.2:df793163d58, Dec  5 2025, 12:18:06) [Clang 16.0.0 (clang-1600.0.26.6)]"
+  },
+  "K1": {
+    "label": "Baseline K=1",
+    "max_phase1": 1,
+    "neural_strategy": "none",
+    "total_scrambles": 200,
+    "successful": 200,
+    "failures": 0,
+    "move_stats": {
+      "mean": 20.765,
+      "median": 21.0,
+      "stdev": 0.8143,
+      "min": 18,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 647.5,
+      "median_ms": 430.1,
+      "p95_ms": 2009.8,
+      "p99_ms": 2961.4,
+      "max_ms": 3410.0
+    },
+    "distribution": {
+      "le18": 3,
+      "count_19_20": 53,
+      "count_21": 117,
+      "count_22_plus": 27,
+      "le20": 56,
+      "le20_pct": 28.0,
+      "le21": 173
+    },
+    "wall_time_sec": 129.5,
+    "node_stats": {
+      "mean_nodes": 787601,
+      "median_nodes": 510040,
+      "mean_phase1_nodes": 691168,
+      "mean_phase2_nodes": 96433
+    }
+  },
+  "K3": {
+    "label": "Multi K=3",
+    "max_phase1": 3,
+    "neural_strategy": "none",
+    "total_scrambles": 200,
+    "successful": 200,
+    "failures": 0,
+    "move_stats": {
+      "mean": 20.365,
+      "median": 20.0,
+      "stdev": 0.7581,
+      "min": 18,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 2814.4,
+      "median_ms": 3019.9,
+      "p95_ms": 5000.1,
+      "p99_ms": 5000.1,
+      "max_ms": 5000.1
+    },
+    "distribution": {
+      "le18": 4,
+      "count_19_20": 105,
+      "count_21": 85,
+      "count_22_plus": 6,
+      "le20": 109,
+      "le20_pct": 54.5,
+      "le21": 194
+    },
+    "wall_time_sec": 562.9,
+    "node_stats": {
+      "mean_nodes": 3451890,
+      "median_nodes": 4030858,
+      "mean_phase1_nodes": 3317768,
+      "mean_phase2_nodes": 134122
+    }
+  },
+  "K5": {
+    "label": "Multi K=5",
+    "max_phase1": 5,
+    "neural_strategy": "none",
+    "total_scrambles": 200,
+    "successful": 200,
+    "failures": 0,
+    "move_stats": {
+      "mean": 20.35,
+      "median": 20.0,
+      "stdev": 0.7552,
+      "min": 18,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 2842.5,
+      "median_ms": 3604.9,
+      "p95_ms": 5000.1,
+      "p99_ms": 5000.1,
+      "max_ms": 5000.2
+    },
+    "distribution": {
+      "le18": 4,
+      "count_19_20": 108,
+      "count_21": 82,
+      "count_22_plus": 6,
+      "le20": 112,
+      "le20_pct": 56.0,
+      "le21": 194
+    },
+    "wall_time_sec": 568.5,
+    "node_stats": {
+      "mean_nodes": 3386765,
+      "median_nodes": 4030858,
+      "mean_phase1_nodes": 3253047,
+      "mean_phase2_nodes": 133718
+    }
+  },
+  "K10": {
+    "label": "Multi K=10",
+    "max_phase1": 10,
+    "neural_strategy": "none",
+    "total_scrambles": 200,
+    "successful": 200,
+    "failures": 0,
+    "move_stats": {
+      "mean": 20.345,
+      "median": 20.0,
+      "stdev": 0.7475,
+      "min": 18,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 2834.9,
+      "median_ms": 3353.9,
+      "p95_ms": 5000.1,
+      "p99_ms": 5000.1,
+      "max_ms": 5000.1
+    },
+    "distribution": {
+      "le18": 4,
+      "count_19_20": 108,
+      "count_21": 83,
+      "count_22_plus": 5,
+      "le20": 112,
+      "le20_pct": 56.0,
+      "le21": 195
+    },
+    "wall_time_sec": 567.0,
+    "node_stats": {
+      "mean_nodes": 3401183,
+      "median_nodes": 4030858,
+      "mean_phase1_nodes": 3267314,
+      "mean_phase2_nodes": 133868
+    }
+  },
+  "K5_move_order": {
+    "label": "K=5 + move_order (coord)",
+    "max_phase1": 5,
+    "neural_strategy": "move_order",
+    "total_scrambles": 200,
+    "successful": 188,
+    "failures": 12,
+    "move_stats": {
+      "mean": 20.537,
+      "median": 21.0,
+      "stdev": 0.8297,
+      "min": 18,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 3373.5,
+      "median_ms": 5000.1,
+      "p95_ms": 5000.1,
+      "p99_ms": 5000.2,
+      "max_ms": 5001.9
+    },
+    "distribution": {
+      "le18": 2,
+      "count_19_20": 86,
+      "count_21": 80,
+      "count_22_plus": 20,
+      "le20": 88,
+      "le20_pct": 46.8,
+      "le21": 168
+    },
+    "wall_time_sec": 674.7,
+    "node_stats": {
+      "mean_nodes": 1450118,
+      "median_nodes": 2070715,
+      "mean_phase1_nodes": 1347288,
+      "mean_phase2_nodes": 102830
+    }
+  },
+  "K5_lut": {
+    "label": "K=5 + LUT",
+    "max_phase1": 5,
+    "neural_strategy": "lut",
+    "total_scrambles": 200,
+    "successful": 197,
+    "failures": 3,
+    "move_stats": {
+      "mean": 20.452,
+      "median": 21,
+      "stdev": 0.8293,
+      "min": 18,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 3046.7,
+      "median_ms": 5000.1,
+      "p95_ms": 5000.1,
+      "p99_ms": 5000.2,
+      "max_ms": 5000.4
+    },
+    "distribution": {
+      "le18": 3,
+      "count_19_20": 95,
+      "count_21": 84,
+      "count_22_plus": 15,
+      "le20": 98,
+      "le20_pct": 49.7,
+      "le21": 182
+    },
+    "wall_time_sec": 609.3,
+    "node_stats": {
+      "mean_nodes": 2591498,
+      "median_nodes": 3146616,
+      "mean_phase1_nodes": 2466397,
+      "mean_phase2_nodes": 125101
+    }
+  },
+  "stats_K1_vs_K5": {
+    "t_stat": 9.86,
+    "p_value": 0.0,
+    "mean_diff": 0.415,
+    "ci_95": [
+      0.332,
+      0.498
+    ],
+    "cohens_d": 0.7,
+    "n_paired": 200
+  }
+}

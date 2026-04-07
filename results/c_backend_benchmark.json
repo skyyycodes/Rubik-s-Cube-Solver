@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "scrambles": 200,
+    "seed": 42,
+    "max_depth": 24
+  },
+  "c_backend_k1": {
+    "successful": 200,
+    "failures": 0,
+    "mean_moves": 20.77,
+    "median_moves": 21.0,
+    "stdev_moves": 0.81,
+    "le20_count": 56,
+    "le20_pct": 28.0,
+    "mean_time_ms": 11.76,
+    "median_time_ms": 7.87,
+    "p95_time_ms": 36.12,
+    "p99_time_ms": 53.4,
+    "max_time_ms": 66.03,
+    "min_time_ms": 0.13
+  },
+  "python_k1": {
+    "successful": 200,
+    "failures": 0,
+    "mean_moves": 20.77,
+    "median_moves": 21.0,
+    "stdev_moves": 0.81,
+    "le20_count": 56,
+    "le20_pct": 28.0,
+    "mean_time_ms": 698.47,
+    "median_time_ms": 466.44,
+    "p95_time_ms": 2045.9,
+    "p99_time_ms": 3386.75,
+    "max_time_ms": 3537.18,
+    "min_time_ms": 10.61
+  },
+  "python_k5": {
+    "successful": 199,
+    "failures": 1,
+    "mean_moves": 20.43,
+    "median_moves": 20,
+    "stdev_moves": 0.79,
+    "le20_count": 104,
+    "le20_pct": 52.3,
+    "mean_time_ms": 2997.85,
+    "median_time_ms": 4415.37,
+    "p95_time_ms": 5000.11,
+    "p99_time_ms": 5000.19,
+    "max_time_ms": 5000.24,
+    "min_time_ms": 12.16
+  }
+}

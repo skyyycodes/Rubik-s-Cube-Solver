@@ -1,0 +1,217 @@
+{
+  "strategy_comparison": {
+    "baseline_k1": {
+      "label": "Baseline-K1",
+      "max_phase1": 1,
+      "neural_strategy": "none",
+      "total_scrambles": 200,
+      "successful": 200,
+      "move_stats": {
+        "mean": 20.765,
+        "median": 21.0,
+        "stdev": 0.8143036609651872,
+        "min": 18,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 527.269800901413,
+        "median_ms": 349.4521379470825,
+        "max_ms": 2791.008949279785,
+        "p95_ms": 1529.5023918151855,
+        "p99_ms": 2410.1550579071045
+      },
+      "distribution": {
+        "optimal_20": 56,
+        "near_optimal_18": 3,
+        "good_21": 173
+      },
+      "node_stats": {
+        "mean_nodes": 787601.13,
+        "median_nodes": 510040.5,
+        "mean_phase1_nodes": 691167.935,
+        "mean_phase2_nodes": 96433.195
+      }
+    },
+    "K5-prob-0.1": {
+      "label": "K5-prob-0.1",
+      "max_phase1": 5,
+      "neural_strategy": "probabilistic",
+      "total_scrambles": 200,
+      "successful": 200,
+      "move_stats": {
+        "mean": 20.315,
+        "median": 20.0,
+        "stdev": 0.7406197323456205,
+        "min": 18,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 2736.052453517914,
+        "median_ms": 2615.118980407715,
+        "max_ms": 11929.494857788086,
+        "p95_ms": 5000.076055526733,
+        "p99_ms": 5000.174760818481
+      },
+      "distribution": {
+        "optimal_20": 118,
+        "near_optimal_18": 4,
+        "good_21": 195
+      },
+      "node_stats": {
+        "mean_nodes": 4076982.715,
+        "median_nodes": 3824853.5,
+        "mean_phase1_nodes": 3938109.545,
+        "mean_phase2_nodes": 138873.17
+      }
+    },
+    "K5-prob-0.3": {
+      "label": "K5-prob-0.3",
+      "max_phase1": 5,
+      "neural_strategy": "probabilistic",
+      "total_scrambles": 200,
+      "successful": 200,
+      "move_stats": {
+        "mean": 20.315,
+        "median": 20.0,
+        "stdev": 0.7406197323456205,
+        "min": 18,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 2896.1616253852844,
+        "median_ms": 2645.600914955139,
+        "max_ms": 48072.01790809631,
+        "p95_ms": 5000.07700920105,
+        "p99_ms": 5000.08225440979
+      },
+      "distribution": {
+        "optimal_20": 118,
+        "near_optimal_18": 4,
+        "good_21": 195
+      },
+      "node_stats": {
+        "mean_nodes": 4104854.66,
+        "median_nodes": 4030858.5,
+        "mean_phase1_nodes": 3965321.135,
+        "mean_phase2_nodes": 139533.525
+      }
+    },
+    "K5-prob-0.5": {
+      "label": "K5-prob-0.5",
+      "max_phase1": 5,
+      "neural_strategy": "probabilistic",
+      "total_scrambles": 200,
+      "successful": 200,
+      "move_stats": {
+        "mean": 20.315,
+        "median": 20.0,
+        "stdev": 0.7406197323456205,
+        "min": 18,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 2681.92489027977,
+        "median_ms": 2641.437530517578,
+        "max_ms": 5000.082015991211,
+        "p95_ms": 5000.076055526733,
+        "p99_ms": 5000.079870223999
+      },
+      "distribution": {
+        "optimal_20": 118,
+        "near_optimal_18": 4,
+        "good_21": 195
+      },
+      "node_stats": {
+        "mean_nodes": 4121200.085,
+        "median_nodes": 4030858.5,
+        "mean_phase1_nodes": 3981519.295,
+        "mean_phase2_nodes": 139680.79
+      }
+    },
+    "K5-prob-0.7": {
+      "label": "K5-prob-0.7",
+      "max_phase1": 5,
+      "neural_strategy": "probabilistic",
+      "total_scrambles": 200,
+      "successful": 199,
+      "move_stats": {
+        "mean": 20.311557788944725,
+        "median": 20,
+        "stdev": 0.7408820060550105,
+        "min": 18,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 2937.1489747684805,
+        "median_ms": 2566.8087005615234,
+        "max_ms": 58026.172161102295,
+        "p95_ms": 5000.076055526733,
+        "p99_ms": 5000.081777572632
+      },
+      "distribution": {
+        "optimal_20": 118,
+        "near_optimal_18": 4,
+        "good_21": 194
+      },
+      "node_stats": {
+        "mean_nodes": 4075914.753768844,
+        "median_nodes": 3688132,
+        "mean_phase1_nodes": 3938206.40201005,
+        "mean_phase2_nodes": 137708.35175879396
+      }
+    },
+    "K5-prob-0.9": {
+      "label": "K5-prob-0.9",
+      "max_phase1": 5,
+      "neural_strategy": "probabilistic",
+      "total_scrambles": 200,
+      "successful": 200,
+      "move_stats": {
+        "mean": 20.32,
+        "median": 20.0,
+        "stdev": 0.7418569665332866,
+        "min": 18,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 3430.9472846984863,
+        "median_ms": 2614.742636680603,
+        "max_ms": 123687.15167045593,
+        "p95_ms": 5000.076770782471,
+        "p99_ms": 5000.084161758423
+      },
+      "distribution": {
+        "optimal_20": 117,
+        "near_optimal_18": 4,
+        "good_21": 195
+      },
+      "node_stats": {
+        "mean_nodes": 4101979.72,
+        "median_nodes": 3824853.5,
+        "mean_phase1_nodes": 3962583.035,
+        "mean_phase2_nodes": 139396.685
+      }
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-03-02T14:19:39.501418",
+    "scrambles": 200,
+    "seed": 42,
+    "max_phase1": 5,
+    "timeout_ms": 5000,
+    "time_budget_sec": null,
+    "strategies": [
+      "probabilistic"
+    ],
+    "neural_prob": 0.5,
+    "neural_probs": [
+      0.1,
+      0.3,
+      0.5,
+      0.7,
+      0.9
+    ],
+    "neural_depth_cutoff": 5,
+    "hard_cases": false
+  }
+}

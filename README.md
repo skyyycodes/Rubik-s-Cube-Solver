@@ -18,3 +18,7 @@ This project concentrates on solving a unsolved Rubik's Cube. The program contai
 Click below for a sample VIDEO:
 
 [![Watch the video](https://img.youtube.com/vi/BXai7tTxbdE/sddefault.jpg)](https://youtu.be/BXai7tTxbdE)
+
+---
+
+**Reproducing paper results.** To regenerate the benchmark tables in the report, see [START.md](START.md) section "Reproducing paper results". Run `benchmark.py` with the documented commands and seed 42; results are written to `results/*.json`.

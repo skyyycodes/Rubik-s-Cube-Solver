@@ -1,0 +1,114 @@
+{
+  "architectures": {
+    "mlp_base": {
+      "name": "mlp_base",
+      "label": "MLP-3 (256\u2192128\u219264)",
+      "hidden_sizes": [
+        256,
+        128,
+        64
+      ],
+      "n_params": 83794,
+      "train_acc": 0.1155,
+      "val_acc": 0.1037,
+      "top3_acc": 0.2581,
+      "inference_us": 8.1,
+      "full_predict_us": 15.6,
+      "final_loss": 2.8043
+    },
+    "mlp_wide": {
+      "name": "mlp_wide",
+      "label": "MLP-4 Wide (512\u2192256\u2192128\u219264)",
+      "hidden_sizes": [
+        512,
+        256,
+        128,
+        64
+      ],
+      "n_params": 256594,
+      "train_acc": 0.1515,
+      "val_acc": 0.1386,
+      "top3_acc": 0.282,
+      "inference_us": 12.2,
+      "full_predict_us": 19.7,
+      "final_loss": 2.7467
+    },
+    "mlp_deep": {
+      "name": "mlp_deep",
+      "label": "MLP-5 Deep (256\u2192256\u2192256\u2192128\u219264)",
+      "hidden_sizes": [
+        256,
+        256,
+        256,
+        128,
+        64
+      ],
+      "n_params": 215378,
+      "train_acc": 0.144,
+      "val_acc": 0.1283,
+      "top3_acc": 0.2806,
+      "inference_us": 13.7,
+      "full_predict_us": 21.3,
+      "final_loss": 2.7515
+    }
+  },
+  "lut": {
+    "top1_agreement": 0.2928,
+    "top3_agreement": 0.5705,
+    "lookup_us": 1.53,
+    "build_time_s": 0.5,
+    "memory_kb": 576.0,
+    "n_entries": 32768
+  },
+  "solver_benchmarks": {
+    "Baseline K=1": {
+      "successful": 50,
+      "total": 50,
+      "mean_moves": 20.82,
+      "pct_le20": 30.0,
+      "mean_time_ms": 643.9,
+      "mean_nodes": 869731,
+      "p95_time_ms": 1656.9
+    },
+    "K5-none": {
+      "successful": 50,
+      "total": 50,
+      "mean_moves": 20.34,
+      "pct_le20": 62.0,
+      "mean_time_ms": 2450.5,
+      "mean_nodes": 3245362,
+      "p95_time_ms": 5000.1
+    },
+    "K5-move_order": {
+      "successful": 47,
+      "total": 50,
+      "mean_moves": 20.43,
+      "pct_le20": 59.6,
+      "mean_time_ms": 3145.4,
+      "mean_nodes": 1323018,
+      "p95_time_ms": 5000.1
+    },
+    "K5-lut": {
+      "successful": 50,
+      "total": 50,
+      "mean_moves": 20.22,
+      "pct_le20": 68.0,
+      "mean_time_ms": 2395.2,
+      "mean_nodes": 2708105,
+      "p95_time_ms": 5000.1
+    }
+  },
+  "derived": {
+    "lut_speedup_vs_k5_none": 1.02,
+    "lut_speedup_vs_move_order": 1.31,
+    "lut_node_reduction": 1.2,
+    "lut_wall_clock_improvement": true
+  },
+  "metadata": {
+    "timestamp": "2026-03-05T18:53:08",
+    "samples": 100000,
+    "epochs": 100,
+    "solver_scrambles": 50,
+    "seed": 42
+  }
+}

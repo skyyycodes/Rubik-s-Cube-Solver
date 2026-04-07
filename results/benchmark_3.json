@@ -1,0 +1,32 @@
+{
+  "improved": {
+    "label": "Multi-3",
+    "max_phase1": 3,
+    "total_scrambles": 200,
+    "successful": 200,
+    "move_stats": {
+      "mean": 20.305,
+      "median": 20.0,
+      "stdev": 0.7380369180890015,
+      "min": 18,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 2610.7358133792877,
+      "median_ms": 2333.250641822815,
+      "max_ms": 5000.083923339844
+    },
+    "distribution": {
+      "optimal_20": 120,
+      "near_optimal_18": 4,
+      "good_21": 195
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-02-25T14:20:27.541172",
+    "scrambles": 200,
+    "seed": 42,
+    "timeout_ms": 5000,
+    "time_budget_sec": null
+  }
+}

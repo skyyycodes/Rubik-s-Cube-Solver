@@ -1,0 +1,66 @@
+{
+  "baseline": {
+    "label": "Baseline",
+    "max_phase1": 1,
+    "neural_strategy": "none",
+    "total_scrambles": 30,
+    "successful": 30,
+    "move_stats": {
+      "mean": 20.833333333333332,
+      "median": 21.0,
+      "stdev": 0.6989318615762461,
+      "min": 20,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 534.3778292338053,
+      "median_ms": 340.5689001083374,
+      "max_ms": 2802.2191524505615,
+      "p95_ms": 1594.433069229126,
+      "p99_ms": 2245.929002761841
+    },
+    "distribution": {
+      "optimal_20": 10,
+      "near_optimal_18": 0,
+      "good_21": 25
+    }
+  },
+  "improved": {
+    "label": "Multi-5",
+    "max_phase1": 5,
+    "neural_strategy": "none",
+    "total_scrambles": 30,
+    "successful": 30,
+    "move_stats": {
+      "mean": 20.466666666666665,
+      "median": 20.0,
+      "stdev": 0.7302967433402214,
+      "min": 19,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 2357.439088821411,
+      "median_ms": 1077.6410102844238,
+      "max_ms": 5000.090837478638,
+      "p95_ms": 5000.078916549683,
+      "p99_ms": 5000.083923339844
+    },
+    "distribution": {
+      "optimal_20": 18,
+      "near_optimal_18": 0,
+      "good_21": 27
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-03-05T16:35:46.897162",
+    "scrambles": 30,
+    "seed": 42,
+    "timeout_ms": 5000,
+    "time_budget_sec": null,
+    "use_neural": false,
+    "neural_strategy": "none",
+    "neural_prob": 0.5,
+    "neural_depth_cutoff": 5,
+    "hard_cases": false
+  }
+}

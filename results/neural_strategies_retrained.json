@@ -1,0 +1,182 @@
+{
+  "strategy_comparison": {
+    "baseline_k1": {
+      "label": "Baseline-K1",
+      "max_phase1": 1,
+      "neural_strategy": "none",
+      "total_scrambles": 50,
+      "successful": 50,
+      "move_stats": {
+        "mean": 20.78,
+        "median": 21.0,
+        "stdev": 0.8400680244565232,
+        "min": 19,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 551.0690879821777,
+        "median_ms": 310.4809522628784,
+        "max_ms": 2668.1039333343506,
+        "p95_ms": 1893.0931091308594,
+        "p99_ms": 2491.128921508789
+      },
+      "distribution": {
+        "optimal_20": 18,
+        "near_optimal_18": 0,
+        "good_21": 40
+      },
+      "node_stats": {
+        "mean_nodes": 795434.88,
+        "median_nodes": 428536.0,
+        "mean_phase1_nodes": 702211.22,
+        "mean_phase2_nodes": 93223.66
+      }
+    },
+    "K5-none": {
+      "label": "K5-none",
+      "max_phase1": 5,
+      "neural_strategy": "none",
+      "total_scrambles": 50,
+      "successful": 50,
+      "move_stats": {
+        "mean": 20.36,
+        "median": 20.0,
+        "stdev": 0.7494215456345144,
+        "min": 19,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 2429.862279891968,
+        "median_ms": 1032.393455505371,
+        "max_ms": 5000.2570152282715,
+        "p95_ms": 5000.079154968262,
+        "p99_ms": 5000.083923339844
+      },
+      "distribution": {
+        "optimal_20": 30,
+        "near_optimal_18": 0,
+        "good_21": 47
+      },
+      "node_stats": {
+        "mean_nodes": 3488996.28,
+        "median_nodes": 1482967.0,
+        "mean_phase1_nodes": 3361593.34,
+        "mean_phase2_nodes": 127402.94
+      }
+    },
+    "K5-move_order": {
+      "label": "K5-move_order",
+      "max_phase1": 5,
+      "neural_strategy": "move_order",
+      "total_scrambles": 50,
+      "successful": 50,
+      "move_stats": {
+        "mean": 20.36,
+        "median": 20.0,
+        "stdev": 0.7494215456345144,
+        "min": 19,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 2436.184310913086,
+        "median_ms": 1030.9354066848755,
+        "max_ms": 5000.089645385742,
+        "p95_ms": 5000.079154968262,
+        "p99_ms": 5000.086069107056
+      },
+      "distribution": {
+        "optimal_20": 30,
+        "near_optimal_18": 0,
+        "good_21": 47
+      },
+      "node_stats": {
+        "mean_nodes": 3532348.9,
+        "median_nodes": 1482967.0,
+        "mean_phase1_nodes": 3404198.48,
+        "mean_phase2_nodes": 128150.42
+      }
+    },
+    "K5-probabilistic": {
+      "label": "K5-probabilistic",
+      "max_phase1": 5,
+      "neural_strategy": "probabilistic",
+      "total_scrambles": 50,
+      "successful": 50,
+      "move_stats": {
+        "mean": 20.36,
+        "median": 20.0,
+        "stdev": 0.7494215456345144,
+        "min": 19,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 2427.2189378738403,
+        "median_ms": 1023.5264301300049,
+        "max_ms": 5000.134229660034,
+        "p95_ms": 5000.082015991211,
+        "p99_ms": 5000.082969665527
+      },
+      "distribution": {
+        "optimal_20": 30,
+        "near_optimal_18": 0,
+        "good_21": 47
+      },
+      "node_stats": {
+        "mean_nodes": 3553299.72,
+        "median_nodes": 1482967.0,
+        "mean_phase1_nodes": 3425139.24,
+        "mean_phase2_nodes": 128160.48
+      }
+    },
+    "K5-adaptive": {
+      "label": "K5-adaptive",
+      "max_phase1": 5,
+      "neural_strategy": "adaptive",
+      "total_scrambles": 50,
+      "successful": 50,
+      "move_stats": {
+        "mean": 20.36,
+        "median": 20.0,
+        "stdev": 0.7494215456345144,
+        "min": 19,
+        "max": 22
+      },
+      "time_stats": {
+        "mean_ms": 2430.740375518799,
+        "median_ms": 1026.2960195541382,
+        "max_ms": 5000.123977661133,
+        "p95_ms": 5000.079154968262,
+        "p99_ms": 5000.092029571533
+      },
+      "distribution": {
+        "optimal_20": 30,
+        "near_optimal_18": 0,
+        "good_21": 47
+      },
+      "node_stats": {
+        "mean_nodes": 3544941.58,
+        "median_nodes": 1482967.0,
+        "mean_phase1_nodes": 3416746.06,
+        "mean_phase2_nodes": 128195.52
+      }
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-03-05T09:49:21.210456",
+    "scrambles": 50,
+    "seed": 42,
+    "max_phase1": 5,
+    "timeout_ms": 5000,
+    "time_budget_sec": null,
+    "strategies": [
+      "none",
+      "move_order",
+      "probabilistic",
+      "adaptive"
+    ],
+    "neural_prob": 0.5,
+    "neural_probs": null,
+    "neural_depth_cutoff": 5,
+    "hard_cases": false
+  }
+}

@@ -1,0 +1,134 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  13 MAR 2026 17:25
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**report.tex
+(./report.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(./svmult.cls
+Document Class: svmult 2007/06/25 v5.4 
+Springer Verlag global LaTeX document class for multi authored books
+Class Springer-SVMult Info: extra/valid Springer sub-package 
+(Springer-SVMult)           not found in option list - using "global" style.
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@section=\count276
+\c@subsection=\count277
+\c@subsubsection=\count278
+\c@paragraph=\count279
+\c@subparagraph=\count280
+\c@figure=\count281
+\c@table=\count282
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+\svparindent=\dimen149
+\bibindent=\dimen150
+\betweenumberspace=\dimen151
+\headlineindent=\dimen152
+\minitoc=\write3
+\c@minitocdepth=\count283
+\c@chapter=\count284
+\mottowidth=\dimen153
+\svitemindent=\dimen154
+\verbatimindent=\dimen155
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 963.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 964.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 965.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 966.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 967.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 968.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 969.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 970.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 971.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 972.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 973.
+\tocchpnum=\dimen156
+\tocsecnum=\dimen157
+\tocsectotal=\dimen158
+\tocsubsecnum=\dimen159
+\tocsubsectotal=\dimen160
+\tocsubsubsecnum=\dimen161
+\tocsubsubsectotal=\dimen162
+\tocparanum=\dimen163
+\tocparatotal=\dimen164
+\tocsubparanum=\dimen165
+\foot@parindent=\dimen166
+\spthmsep=\dimen167
+\c@theorem=\count285
+\c@case=\count286
+\c@conjecture=\count287
+\c@corollary=\count288
+\c@definition=\count289
+\c@example=\count290
+\c@exercise=\count291
+\c@lemma=\count292
+\c@note=\count293
+\c@problem=\count294
+\c@property=\count295
+\c@proposition=\count296
+\c@question=\count297
+\c@solution=\count298
+\c@remark=\count299
+\c@prob=\count300
+\instindent=\dimen168
+\figgap=\dimen169
+\bildb@x=\box53
+\figcapgap=\dimen170
+\tabcapgap=\dimen171
+\c@merk=\count301
+\c@@inst=\count302
+\c@@auth=\count303
+\c@auco=\count304
+\instindent=\dimen172
+\authrun=\box54
+\authorrunning=\toks17
+\tocauthor=\toks18
+\titrun=\box55
+\titlerunning=\toks19
+\toctitle=\toks20
+\c@contribution=\count305
+LaTeX Info: Redefining \abstract on input line 2320.
+)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2025/01/14 v1.3e Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 149.
+
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+
+! LaTeX Error: File `framed.sty' not found.
+
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: sty)
+
+Enter file name: 
+! Emergency stop.
+<read *> 
+         
+l.3 ^^M
+       
+*** (cannot \read from terminal in nonstop modes)
+
+ 
+Here is how much of TeX's memory you used:
+ 1083 strings out of 469006
+ 12937 string characters out of 5454814
+ 433756 words of memory out of 5000000
+ 29853 multiletter control sequences out of 15000+600000
+ 627721 words of font info for 40 fonts, out of 8000000 for 9000
+ 319 hyphenation exceptions out of 8191
+ 49i,0n,57p,152b,36s stack positions out of 10000i,1000n,20000p,200000b,200000s
+!  ==> Fatal error occurred, no output PDF file produced!

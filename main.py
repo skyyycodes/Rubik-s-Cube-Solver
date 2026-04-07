@@ -4,9 +4,27 @@ import color_detect
 import maker
 import MYcubePreview
 import Info
-from kociemba import kociemba
 import subprocess
 import sys
+
+try:
+    # Repository layout: ./kociemba/kociemba exposes the enhanced solver.
+    from kociemba.kociemba import solve as kociemba_solve
+except ImportError:
+    # Fallback for pip package that exports solve at top-level.
+    from kociemba import solve as kociemba_solve
+
+
+def solve_cube_compat(cube_string):
+    """Solve with enhanced args when available; fall back to basic API."""
+    try:
+        return kociemba_solve(
+            cube_string,
+            max_phase1_solutions=5,
+            time_budget_sec=0.5,
+        )
+    except TypeError:
+        return kociemba_solve(cube_string)
 
 # Manual input mode variables
 manual_mode = True  # Start in manual mode by default
@@ -355,7 +373,7 @@ while True:
             text = 'invalid cube'
         else:
             try:
-                ans = kociemba.solve(myCube)
+                ans = solve_cube_compat(myCube)
                 text = ans
                 ans = ans.split()
                 for i in range(len(ans)):

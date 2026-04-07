@@ -4,7 +4,25 @@ import numpy as np
 from PIL import Image
 import color_detect
 import maker
-import kociemba
+
+try:
+    # Repository layout: ./kociemba/kociemba exposes the enhanced solver.
+    from kociemba.kociemba import solve as kociemba_solve
+except ImportError:
+    # Fallback for pip package that exports solve at top-level.
+    from kociemba import solve as kociemba_solve
+
+
+def solve_cube_compat(cube_string):
+    """Solve with enhanced args when available; fall back to basic API."""
+    try:
+        return kociemba_solve(
+            cube_string,
+            max_phase1_solutions=5,
+            time_budget_sec=0.5,
+        )
+    except TypeError:
+        return kociemba_solve(cube_string)
 
 st.set_page_config(
     page_title="Rubik's Cube Solver",
@@ -173,7 +191,7 @@ if st.button("🔮 Solve Cube", type="primary", use_container_width=True):
     else:
         try:
             with st.spinner("Solving..."):
-                solution = kociemba.solve(myCube)
+                solution = solve_cube_compat(myCube)
 
             st.success("✅ Solution found!")
             st.markdown(f"### Solution: `{solution}`")

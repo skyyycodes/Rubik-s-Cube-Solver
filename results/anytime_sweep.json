@@ -1,0 +1,53 @@
+{
+  "time_budget_sweep": {
+    "0.1": {
+      "mean_moves": 20.023809523809526,
+      "median_moves": 20.0,
+      "pct_le20": 69.0,
+      "mean_time_ms": 59.30090518224807,
+      "p95_time_ms": 100.16798973083496,
+      "successful": 42,
+      "total": 200
+    },
+    "0.3": {
+      "mean_moves": 20.372340425531913,
+      "median_moves": 21.0,
+      "pct_le20": 48.9,
+      "mean_time_ms": 205.06773350086618,
+      "p95_time_ms": 300.0810146331787,
+      "successful": 94,
+      "total": 200
+    },
+    "0.5": {
+      "mean_moves": 20.42105263157895,
+      "median_moves": 21,
+      "pct_le20": 45.9,
+      "mean_time_ms": 353.7633831339671,
+      "p95_time_ms": 500.0791549682617,
+      "successful": 133,
+      "total": 200
+    },
+    "1.0": {
+      "mean_moves": 20.427745664739884,
+      "median_moves": 21,
+      "pct_le20": 49.1,
+      "mean_time_ms": 673.8933441955919,
+      "p95_time_ms": 1000.0851154327393,
+      "successful": 173,
+      "total": 200
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-02-25T15:54:33.999554",
+    "scrambles": 200,
+    "seed": 42,
+    "max_phase1": 5,
+    "time_budgets": [
+      0.1,
+      0.3,
+      0.5,
+      1.0
+    ],
+    "use_neural": false
+  }
+}

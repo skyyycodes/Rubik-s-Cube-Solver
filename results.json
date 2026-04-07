@@ -1,0 +1,54 @@
+{
+  "baseline": {
+    "label": "Baseline",
+    "max_phase1": 1,
+    "total_scrambles": 100,
+    "successful": 100,
+    "move_stats": {
+      "mean": 20.75,
+      "median": 21.0,
+      "stdev": 0.7703468981143128,
+      "min": 19,
+      "max": 22
+    },
+    "time_stats": {
+      "mean_ms": 483.4927535057068,
+      "median_ms": 314.0629529953003,
+      "max_ms": 2524.9598026275635
+    },
+    "distribution": {
+      "optimal_20": 33,
+      "near_optimal_18": 0,
+      "good_21": 86
+    }
+  },
+  "improved": {
+    "label": "Multi-10",
+    "max_phase1": 10,
+    "total_scrambles": 100,
+    "successful": 100,
+    "move_stats": {
+      "mean": 19.74,
+      "median": 20.0,
+      "stdev": 0.5049252369900864,
+      "min": 18,
+      "max": 20
+    },
+    "time_stats": {
+      "mean_ms": 15991.027116775513,
+      "median_ms": 910.5641841888428,
+      "max_ms": 247672.6450920105
+    },
+    "distribution": {
+      "optimal_20": 100,
+      "near_optimal_18": 3,
+      "good_21": 100
+    }
+  },
+  "metadata": {
+    "timestamp": "2026-01-30T03:03:50.133369",
+    "scrambles": 100,
+    "seed": 42,
+    "timeout_ms": 5000
+  }
+}

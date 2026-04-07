@@ -1,0 +1,167 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{joyner2008}
+\citation{godnumber}
+\citation{kociemba}
+\citation{korf1997}
+\citation{korf1985}
+\citation{culberson1998}
+\citation{godnumber}
+\citation{thistlethwaite1981}
+\citation{kociemba}
+\citation{deepcubea}
+\citation{brunetto2017}
+\citation{silver2016,silver2017}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
+\newlabel{sec:intro}{{I}{1}{Introduction}{section.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-A}}The Rubik's Cube as a Search Problem}{1}{subsection.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-B}}God's Number and Practical Solving}{1}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-C}}Paper Organisation}{1}{subsection.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{1}{section.2}\protected@file@percent }
+\newlabel{sec:related}{{II}{1}{Related Work}{section.2}{}}
+\citation{shen2020}
+\citation{ferber2022}
+\citation{schaeffer1989,reinefeld1994}
+\citation{korf1985}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Mathematical Foundation}{2}{section.3}\protected@file@percent }
+\newlabel{sec:math}{{III}{2}{Mathematical Foundation}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Coordinate System}{2}{subsection.3.1}\protected@file@percent }
+\newlabel{sec:coordinates}{{\mbox  {III-A}}{2}{Coordinate System}{subsection.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}How the Two-Phase Algorithm Works}{2}{subsection.3.2}\protected@file@percent }
+\newlabel{sec:two-phase}{{\mbox  {III-B}}{2}{How the Two-Phase Algorithm Works}{subsection.3.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Solver pipeline. The scrambled cube is converted to coordinates, then Phase~1 searches for states in subgroup $G_1$ (optionally guided by neural ordering). Phase~2 completes the solve. With $K > 1$, multiple Phase~1 endpoints are tried and the shortest overall solution is kept.}}{2}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:pipeline}{{1}{2}{Solver pipeline. The scrambled cube is converted to coordinates, then Phase~1 searches for states in subgroup $G_1$ (optionally guided by neural ordering). Phase~2 completes the solve. With $K > 1$, multiple Phase~1 endpoints are tried and the shortest overall solution is kept}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Pruning Tables}{2}{subsection.3.3}\protected@file@percent }
+\newlabel{sec:pruning}{{\mbox  {III-C}}{2}{Pruning Tables}{subsection.3.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Consecutive Move Pruning}{2}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Formal Results}{2}{subsection.3.5}\protected@file@percent }
+\newlabel{sec:formal}{{\mbox  {III-E}}{2}{Formal Results}{subsection.3.5}{}}
+\newlabel{thm:bound-paradox}{{1}{2}{Admissible Bound Paradox}{subsection.3.5}{}}
+\newlabel{prop:order-stat}{{2}{3}{Multi-Solution Order-Statistic Bound}{subsection.3.5}{}}
+\newlabel{thm:node-reduction}{{3}{3}{Node Reduction from Neural Move Ordering}{subsection.3.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Methodology and Implementation}{3}{section.4}\protected@file@percent }
+\newlabel{sec:method}{{IV}{3}{Methodology and Implementation}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}System Overview}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Multi-Solution Phase~1 Search}{3}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:multi-phase1}{{\mbox  {IV-B}}{3}{Multi-Solution Phase~1 Search}{subsection.4.2}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Multi-Solution Phase~1 IDA*}}{3}{algorithm.1}\protected@file@percent }
+\newlabel{alg:multi-phase1}{{1}{3}{Multi-Solution Phase~1 IDA*}{algorithm.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Multi-solution Phase~1. Left: $K{=}1$ finds one $G_1$ endpoint and accepts whatever Phase~2 gives. Right: $K{=}5$ finds five endpoints, runs Phase~2 from each, and returns the shortest total (dark green, $g_3$). Mean improvement: $-0.42$ moves ($p < 0.001$).}}{3}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:multi-solution}{{2}{3}{Multi-solution Phase~1. Left: $K{=}1$ finds one $G_1$ endpoint and accepts whatever Phase~2 gives. Right: $K{=}5$ finds five endpoints, runs Phase~2 from each, and returns the shortest total (dark green, $g_3$). Mean improvement: $-0.42$ moves ($p < 0.001$)}{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Time-Bounded Anytime Mode}{3}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:anytime}{{\mbox  {IV-C}}{3}{Time-Bounded Anytime Mode}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Neural Move Ordering}{3}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:neural-strategies}{{\mbox  {IV-D}}{3}{Neural Move Ordering}{subsection.4.4}{}}
+\citation{kingma2015}
+\citation{cohen1988}
+\citation{efron1993}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Move predictor MLP. The one-hot encoding (324~dims) or coordinate features (161~dims) pass through three hidden layers. The 18-way softmax output gives a distribution over moves for ordering.}}{4}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:mlp-arch}{{3}{4}{Move predictor MLP. The one-hot encoding (324~dims) or coordinate features (161~dims) pass through three hidden layers. The 18-way softmax output gives a distribution over moves for ordering}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-E}}Neural Network Architecture}{4}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:neural-arch}{{\mbox  {IV-E}}{4}{Neural Network Architecture}{subsection.4.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-F}}Experimental Setup}{4}{subsection.4.6}\protected@file@percent }
+\newlabel{sec:setup}{{\mbox  {IV-F}}{4}{Experimental Setup}{subsection.4.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-G}}Limitations}{4}{subsection.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Results}{4}{section.5}\protected@file@percent }
+\newlabel{sec:results}{{V}{4}{Results}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Baseline Performance}{4}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces C backend vs.\ Python backend (200 scrambles, seed 42, $K{=}1$).}}{4}{table.caption.4}\protected@file@percent }
+\newlabel{tab:c-backend}{{I}{4}{C backend vs.\ Python backend (200 scrambles, seed 42, $K{=}1$)}{table.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Multi-Solution Phase~1 Results}{4}{subsection.5.2}\protected@file@percent }
+\newlabel{sec:multi-results}{{\mbox  {V-B}}{4}{Multi-Solution Phase~1 Results}{subsection.5.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Effect of $K$ on solution quality, optimality rate ($\leq $20 moves), and solve time. Quality improves sharply from $K{=}1$ to $K{=}3$, then plateaus.}}{5}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:k-scaling}{{4}{5}{Effect of $K$ on solution quality, optimality rate ($\leq $20 moves), and solve time. Quality improves sharply from $K{=}1$ to $K{=}3$, then plateaus}{figure.caption.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Move count and solve time vs.\ $K$ (200 scrambles, seed 42, 5\,s timeout).}}{5}{table.caption.6}\protected@file@percent }
+\newlabel{tab:benchmark}{{II}{5}{Move count and solve time vs.\ $K$ (200 scrambles, seed 42, 5\,s timeout)}{table.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Solution length distribution: $K{=}1$ vs.\ $K{=}5$. Multi-solution search shifts mass from 21--22 moves toward $\leq $20 moves.}}{5}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:move-dist}{{5}{5}{Solution length distribution: $K{=}1$ vs.\ $K{=}5$. Multi-solution search shifts mass from 21--22 moves toward $\leq $20 moves}{figure.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Move-length distribution across $K$ (200 scrambles, seed 42).}}{5}{table.caption.8}\protected@file@percent }
+\newlabel{tab:distribution-detail}{{III}{5}{Move-length distribution across $K$ (200 scrambles, seed 42)}{table.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Anytime Mode Results}{6}{subsection.5.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Anytime mode: success rate and mean moves vs.\ time budget.}}{6}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:anytime}{{6}{6}{Anytime mode: success rate and mean moves vs.\ time budget}{figure.caption.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Anytime mode: solution quality vs.\ time budget (200 scrambles, seed 42, $K{=}5$).}}{7}{table.caption.9}\protected@file@percent }
+\newlabel{tab:anytime}{{IV}{7}{Anytime mode: solution quality vs.\ time budget (200 scrambles, seed 42, $K{=}5$)}{table.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Node Expansion Analysis}{7}{subsection.5.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Mean nodes per solve (200 scrambles, seed 42).}}{7}{table.caption.11}\protected@file@percent }
+\newlabel{tab:nodes}{{V}{7}{Mean nodes per solve (200 scrambles, seed 42)}{table.caption.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Neural Strategy Results: Scalar Features Fail}{7}{subsection.5.5}\protected@file@percent }
+\newlabel{sec:neural-results}{{\mbox  {V-E}}{7}{Neural Strategy Results: Scalar Features Fail}{subsection.5.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Neural strategies with scalar features (200 scrambles, $K{=}5$).}}{7}{table.caption.13}\protected@file@percent }
+\newlabel{tab:neural-detail}{{VI}{7}{Neural strategies with scalar features (200 scrambles, $K{=}5$)}{table.caption.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Neural strategy comparison. Neither scalar-feature model nor solver-feedback retrained model improves over the non-neural baseline. Error bars: 95\% bootstrap CIs.}}{8}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:neural}{{7}{8}{Neural strategy comparison. Neither scalar-feature model nor solver-feedback retrained model improves over the non-neural baseline. Error bars: 95\% bootstrap CIs}{figure.caption.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}Coordinate Features: Breaking the Representation Barrier}{8}{subsection.5.6}\protected@file@percent }
+\newlabel{sec:coord-features}{{\mbox  {V-F}}{8}{Coordinate Features: Breaking the Representation Barrier}{subsection.5.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Coordinate features: accuracy and search impact (200 scrambles, $K{=}5$).}}{8}{table.caption.15}\protected@file@percent }
+\newlabel{tab:coord-features}{{VII}{8}{Coordinate features: accuracy and search impact (200 scrambles, $K{=}5$)}{table.caption.15}{}}
+\newlabel{eq:overhead}{{3}{8}{Coordinate Features: Breaking the Representation Barrier}{equation.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Feature representation comparison. Scalar coordinates normalise to $[0,1]$, destroying discrete structure (5.6\% accuracy). Binned one-hot encoding preserves structural regions (83.3\% accuracy)---a $15\times $ improvement with the same MLP.}}{8}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:feature-comparison}{{8}{8}{Feature representation comparison. Scalar coordinates normalise to $[0,1]$, destroying discrete structure (5.6\% accuracy). Binned one-hot encoding preserves structural regions (83.3\% accuracy)---a $15\times $ improvement with the same MLP}{figure.caption.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-G}}Architecture Experiments}{8}{subsection.5.7}\protected@file@percent }
+\newlabel{sec:arch-comparison}{{\mbox  {V-G}}{8}{Architecture Experiments}{subsection.5.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Larger models: more accuracy at higher cost (100K samples, coord.\ features).}}{8}{table.caption.16}\protected@file@percent }
+\newlabel{tab:arch-comparison}{{VIII}{8}{Larger models: more accuracy at higher cost (100K samples, coord.\ features)}{table.caption.16}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-H}}LUT Precomputation: Resolving the Barrier}{8}{subsection.5.8}\protected@file@percent }
+\newlabel{sec:lut}{{\mbox  {V-H}}{8}{LUT Precomputation: Resolving the Barrier}{subsection.5.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces LUT pipeline. \textbf  {Offline}: enumerate all 32K coordinate bins, run the MLP once for each, store 18-move rankings (576\,KB). \textbf  {Online}: each node does an $O(1)$ array lookup instead of a neural forward pass.}}{9}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:lut-pipeline}{{9}{9}{LUT pipeline. \textbf {Offline}: enumerate all 32K coordinate bins, run the MLP once for each, store 18-move rankings (576\,KB). \textbf {Online}: each node does an $O(1)$ array lookup instead of a neural forward pass}{figure.caption.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces LUT vs.\ per-node neural inference (200 scrambles, seed 42, $K{=}5$).}}{9}{table.caption.18}\protected@file@percent }
+\newlabel{tab:lut-benchmark}{{IX}{9}{LUT vs.\ per-node neural inference (200 scrambles, seed 42, $K{=}5$)}{table.caption.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Inference overhead barrier. Default (2843\,ms): node expansion only. Per-node neural (3374\,ms): 2.4$\times $ fewer nodes but +19\% overhead from inference cost. LUT (3047\,ms): same idea, but $O(1)$ lookup replaces the forward pass, cutting overhead to +7\%.}}{9}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:overhead-barrier}{{10}{9}{Inference overhead barrier. Default (2843\,ms): node expansion only. Per-node neural (3374\,ms): 2.4$\times $ fewer nodes but +19\% overhead from inference cost. LUT (3047\,ms): same idea, but $O(1)$ lookup replaces the forward pass, cutting overhead to +7\%}{figure.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-I}}Hard Cases and Multi-Seed Validation}{9}{subsection.5.9}\protected@file@percent }
+\newlabel{sec:hard-cases}{{\mbox  {V-I}}{9}{Hard Cases and Multi-Seed Validation}{subsection.5.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces Hard cases: $K{=}1$ vs.\ $K{=}5$ (49 solves, seed 42).}}{9}{table.caption.20}\protected@file@percent }
+\newlabel{tab:hard}{{X}{9}{Hard cases: $K{=}1$ vs.\ $K{=}5$ (49 solves, seed 42)}{table.caption.20}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XI}{\ignorespaces Multi-seed validation (200 scrambles each).}}{9}{table.caption.22}\protected@file@percent }
+\newlabel{tab:multiseed}{{XI}{9}{Multi-seed validation (200 scrambles each)}{table.caption.22}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Hard cases ($K{=}1$ vs.\ $K{=}5$): move distribution and key metrics.}}{10}{figure.caption.21}\protected@file@percent }
+\newlabel{fig:hard-cases}{{11}{10}{Hard cases ($K{=}1$ vs.\ $K{=}5$): move distribution and key metrics}{figure.caption.21}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Multi-seed validation. $K{=}5$ consistently outperforms the baseline across all four seeds, roughly doubling the $\leq $20-move rate.}}{10}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:multi-seed}{{12}{10}{Multi-seed validation. $K{=}5$ consistently outperforms the baseline across all four seeds, roughly doubling the $\leq $20-move rate}{figure.caption.23}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Discussion}{10}{section.6}\protected@file@percent }
+\newlabel{sec:discussion}{{VI}{10}{Discussion}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Why Multi-Solution Search Works}{10}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Three Levels of Neural Failure---and How We Fixed Two}{10}{subsection.6.2}\protected@file@percent }
+\citation{deepcubea}
+\bibcite{kociemba}{1}
+\bibcite{godnumber}{2}
+\bibcite{muodov}{3}
+\bibcite{deepcubea}{4}
+\bibcite{korf1997}{5}
+\bibcite{thistlethwaite1981}{6}
+\bibcite{brunetto2017}{7}
+\bibcite{shen2020}{8}
+\bibcite{ferber2022}{9}
+\bibcite{felner2004}{10}
+\bibcite{fridrich}{11}
+\bibcite{korf1985}{12}
+\bibcite{hart1968}{13}
+\bibcite{pearl1984}{14}
+\bibcite{culberson1998}{15}
+\bibcite{korf2002}{16}
+\bibcite{silver2016}{17}
+\bibcite{silver2017}{18}
+\bibcite{arfaee2011}{19}
+\bibcite{schaeffer1989}{20}
+\bibcite{reinefeld1994}{21}
+\bibcite{joyner2008}{22}
+\bibcite{cohen1988}{23}
+\bibcite{efron1993}{24}
+\bibcite{david2003}{25}
+\bibcite{hinton2015}{26}
+\bibcite{kingma2015}{27}
+\bibcite{demaine2018}{28}
+\bibcite{paszke2019}{29}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Comparison with DeepCubeA}{11}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}Deployment Recommendations}{11}{subsection.6.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {XII}{\ignorespaces Recommended settings for different use cases.}}{11}{table.caption.24}\protected@file@percent }
+\newlabel{tab:deployment-summary}{{XII}{11}{Recommended settings for different use cases}{table.caption.24}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{11}{section.7}\protected@file@percent }
+\newlabel{sec:conclusion}{{VII}{11}{Conclusion}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{References}{11}{section*.25}\protected@file@percent }
+\gdef \@abspage@last{12}
