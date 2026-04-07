@@ -30,14 +30,30 @@ except ImportError:
     from kociemba import solve as kociemba_solve
 
 
-def solve_cube_compat(cube_string):
-    """Solve with enhanced args when available; fall back to basic API."""
+def solve_cube_compat(cube_string, mode='k5'):
+    """Solve with the given mode; fall back to basic API on older kociemba.
+
+    Modes:
+        'baseline' — K=1, no extras (original Kociemba)
+        'k5'       — K=5 multi-solution search
+        'anytime'  — K=5 + 0.5 s time budget
+        'neural'   — K=5 + LUT-based neural move ordering
+    """
     try:
-        return kociemba_solve(
-            cube_string,
-            max_phase1_solutions=5,
-            time_budget_sec=0.5,
-        )
+        if mode == 'baseline':
+            return kociemba_solve(cube_string, max_phase1_solutions=1)
+        elif mode == 'k5':
+            return kociemba_solve(cube_string, max_phase1_solutions=5,
+                                 timeout=5000)
+        elif mode == 'anytime':
+            return kociemba_solve(cube_string, max_phase1_solutions=5,
+                                 time_budget_sec=2.0)
+        elif mode == 'neural':
+            return kociemba_solve(cube_string, max_phase1_solutions=5,
+                                 timeout=5000, neural_strategy='lut')
+        else:
+            return kociemba_solve(cube_string, max_phase1_solutions=5,
+                                 timeout=5000)
     except TypeError:
         return kociemba_solve(cube_string)
 
@@ -124,6 +140,16 @@ class RubiksCube3D:
         self.ax_palette = None
         self.ax_info = None
 
+        # Solver mode toggle (M key cycles through these)
+        self.solve_modes = ['baseline', 'k5', 'anytime', 'neural']
+        self.solve_mode_index = 1  # default: k5
+        self.solve_mode_labels = {
+            'baseline': 'Baseline (K=1)',
+            'k5':       'Multi-Solution (K=5)',
+            'anytime':  'Anytime (K=5, 0.5s)',
+            'neural':   'Neural LUT (K=5)',
+        }
+
         # Message to display
         self.message = ""
         self.message_color = 'black'
@@ -133,6 +159,7 @@ class RubiksCube3D:
         self.current_move_index = -1  # -1 = not started
         self.base_cube_string = None
         self.playback_cube_string = None
+        self.last_solve_info = None
 
     def _physical_faces(self):
         """
@@ -473,6 +500,22 @@ class RubiksCube3D:
             self.ax_info.text(0, y, f"Progress: {progress}/{total} stickers", fontsize=9)
             y -= 1.0
 
+        # Solver mode indicator
+        mode = self.solve_modes[self.solve_mode_index]
+        mode_label = self.solve_mode_labels[mode]
+        self.ax_info.text(0, y, f"Mode: {mode_label}",
+                         fontsize=10, fontweight='bold', color='#cc6600')
+        y -= 0.6
+        self.ax_info.text(0, y, "(press M to cycle modes)", fontsize=8, color='gray')
+        y -= 0.8
+
+        # Last solve stats
+        if hasattr(self, 'last_solve_info') and self.last_solve_info:
+            info = self.last_solve_info
+            self.ax_info.text(0, y, f"Last: {info['moves']} moves, {info['time_ms']:.0f} ms",
+                             fontsize=9, color='#006600')
+            y -= 0.8
+
         y -= 0.3
         # Controls
         controls = [
@@ -482,8 +525,9 @@ class RubiksCube3D:
             "Tab/Shift+Tab: Next/Prev face",
             "Arrow keys: Move in face",
             "1-6: Set color",
+            "M: Cycle solver mode",
             "Enter: SOLVE",
-            "N: Next solution step (updates cube)",
+            "N: Next solution step",
             "S: Random scramble",
             "R: Reset | G: Guide mode",
             "Q: Quit"
@@ -566,7 +610,7 @@ class RubiksCube3D:
         return result
 
     def solve(self):
-        """Solve the cube and return solution"""
+        """Solve the cube using the currently selected mode and return solution"""
         cube_string = self.to_kociemba_string()
 
         # Check color counts
@@ -576,14 +620,26 @@ class RubiksCube3D:
             bad_colors = [c for c, v in counts.items() if v != 9]
             return None, f"Color count error: {', '.join(f'{c}={counts[c]}' for c in bad_colors)}"
 
+        mode = self.solve_modes[self.solve_mode_index]
+        mode_label = self.solve_mode_labels[mode]
+
         try:
-            solution = solve_cube_compat(cube_string)
+            import time as _time
+            t0 = _time.time()
+            solution = solve_cube_compat(cube_string, mode=mode)
+            elapsed_ms = (_time.time() - t0) * 1000
 
             # Store parsed moves for step-by-step guidance
             self.solution_moves = solution.split()
             self.current_move_index = -1  # not started yet
             self.base_cube_string = cube_string
             self.playback_cube_string = cube_string
+            self.last_solve_info = {
+                'mode': mode_label,
+                'moves': len(self.solution_moves),
+                'time_ms': elapsed_ms,
+                'solution': solution,
+            }
             return solution, None
         except ValueError as e:
             # Clear any previous solution
@@ -591,6 +647,7 @@ class RubiksCube3D:
             self.current_move_index = -1
             self.base_cube_string = None
             self.playback_cube_string = None
+            self.last_solve_info = None
             return None, str(e)
 
     def randomize(self):
@@ -854,7 +911,21 @@ class RubiksCube3D:
                 if self.current_move_index == total - 1:
                     self.message += " Done — cube on screen should now be solved."
 
+        elif event.key == 'm':
+            # Cycle solver mode
+            self.solve_mode_index = (self.solve_mode_index + 1) % len(self.solve_modes)
+            mode = self.solve_modes[self.solve_mode_index]
+            label = self.solve_mode_labels[mode]
+            self.message = f"Solver mode: {label}"
+            self.message_color = '#0066cc'
+            print(f"Solver mode changed to: {label}")
+
         elif event.key == 'enter':
+            mode_label = self.solve_mode_labels[self.solve_modes[self.solve_mode_index]]
+            self.message = f"Solving with {mode_label}..."
+            self.message_color = 'orange'
+            self.draw_all()  # show "Solving..." before blocking call
+
             solution, error = self.solve()
             if error:
                 self.message = f"Error: {error}"
@@ -862,14 +933,15 @@ class RubiksCube3D:
                 print(f"Error: {error}")
             else:
                 if solution:
+                    info = self.last_solve_info
                     self.message = (
-                        "Solution loaded. Press 'N' to apply each move and see the cube update."
+                        f"[{info['mode']}] {info['moves']} moves in {info['time_ms']:.0f} ms. "
+                        f"Press 'N' for step-by-step."
                     )
                     self.message_color = 'green'
-                    print(f"\nSOLUTION FOUND!")
+                    print(f"\nSOLUTION FOUND! [{info['mode']}]")
                     print(f"Moves: {solution}")
-                    moves = solution.split()
-                    print(f"Total moves: {len(moves)}")
+                    print(f"Total moves: {info['moves']} | Time: {info['time_ms']:.1f} ms")
                 else:
                     self.message = "Cube is already solved!"
                     self.message_color = 'green'
