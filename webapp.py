@@ -1,228 +1,320 @@
 import streamlit as st
-import cv2 as cv
-import numpy as np
-from PIL import Image
-import color_detect
-import maker
+import time
+import random
+import sys
+from pathlib import Path
 
-try:
-    # Repository layout: ./kociemba/kociemba exposes the enhanced solver.
-    from kociemba.kociemba import solve as kociemba_solve
-except ImportError:
-    # Fallback for pip package that exports solve at top-level.
-    from kociemba import solve as kociemba_solve
+# Ensure the local enhanced kociemba is found before the pip version
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'kociemba'))
+from kociemba import solve as kociemba_solve
+from kociemba.pykociemba import tools
 
+# ── Constants ──────────────────────────────────────────────────────
 
-def solve_cube_compat(cube_string):
-    """Solve with enhanced args when available; fall back to basic API."""
-    try:
-        return kociemba_solve(
-            cube_string,
-            max_phase1_solutions=5,
-            time_budget_sec=0.5,
-        )
-    except TypeError:
-        return kociemba_solve(cube_string)
-
-st.set_page_config(
-    page_title="Rubik's Cube Solver",
-    page_icon="🎲",
-    layout="wide"
-)
-
-st.title("🎲 Rubik's Cube Solver")
-st.markdown("Capture each face of your cube using the webcam, then click **Solve** to get the solution!")
-
-# Face configuration
-FACES = {
-    'up': {'name': 'Upper (White center)', 'color': 'white'},
-    'right': {'name': 'Right (Red center)', 'color': 'red'},
-    'front': {'name': 'Front (Blue center)', 'color': 'blue'},
-    'down': {'name': 'Down (Yellow center)', 'color': 'yellow'},
-    'left': {'name': 'Left (Orange center)', 'color': 'orange'},
-    'back': {'name': 'Back (Green center)', 'color': 'green'}
+COLOR_MAP = {
+    'W': ('white',   '#FFFFFF', 'U'),
+    'R': ('red',     '#E80000', 'R'),
+    'B': ('blue',    '#0051FF', 'F'),
+    'Y': ('yellow',  '#FFD500', 'D'),
+    'O': ('orange',  '#FF8C00', 'L'),
+    'G': ('green',   '#00C800', 'B'),
 }
 
-FACE_ORDER = ['up', 'right', 'front', 'down', 'left', 'back']
+# Display label -> (short key, kociemba letter)
+COLOR_OPTIONS = ['W', 'R', 'B', 'Y', 'O', 'G']
 
-# Color to RGB mapping for display
-COLOR_RGB = {
-    'white': '#FFFFFF',
-    'red': '#FF0000',
-    'blue': '#0000FF',
-    'yellow': '#FFFF00',
-    'orange': '#FF8C00',
-    'green': '#00FF00'
+FACES = [
+    ('U', 'Up',    'W', 'White'),
+    ('R', 'Right', 'R', 'Red'),
+    ('F', 'Front', 'B', 'Blue'),
+    ('D', 'Down',  'Y', 'Yellow'),
+    ('L', 'Left',  'O', 'Orange'),
+    ('B', 'Back',  'G', 'Green'),
+]
+
+SOLVER_MODES = {
+    'Baseline (K=1)': {
+        'desc': 'Original Kociemba — tries one Phase 1 path',
+        'kwargs': dict(max_phase1_solutions=1),
+    },
+    'Multi-Solution (K=5)': {
+        'desc': 'Tries 5 Phase 1 paths, keeps the shortest solution',
+        'kwargs': dict(max_phase1_solutions=5, timeout=5000),
+    },
+    'Anytime (K=5, 2s)': {
+        'desc': 'Returns the best solution found within 2 seconds',
+        'kwargs': dict(max_phase1_solutions=5, time_budget_sec=2.0),
+    },
+    'Neural LUT (K=5)': {
+        'desc': 'K=5 + neural move ordering via precomputed lookup table',
+        'kwargs': dict(max_phase1_solutions=5, timeout=5000,
+                       neural_strategy='lut'),
+    },
 }
 
-def extract_colors_from_image(image, face_key):
-    """Extract 9 colors from the captured image."""
-    # Convert PIL Image to OpenCV format
-    img_array = np.array(image)
-    img_bgr = cv.cvtColor(img_array, cv.COLOR_RGB2BGR)
 
-    # Resize to standard size
-    img_bgr = cv.resize(img_bgr, (720, 720))
+def solve_with_mode(cube_string, mode_name):
+    """Solve cube using the selected mode. Returns (solution, elapsed_ms)."""
+    kwargs = SOLVER_MODES[mode_name]['kwargs']
+    t0 = time.time()
+    solution = kociemba_solve(cube_string, **kwargs)
+    elapsed = (time.time() - t0) * 1000
+    return solution, elapsed
 
-    # Convert to HSV
-    hsv_frame = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
 
-    # Sample points (3x3 grid)
-    h, w = img_bgr.shape[:2]
-    positions = [
-        (h//6, w//6), (h//6, w//2), (h//6, 5*w//6),
-        (h//2, w//6), (h//2, w//2), (h//2, 5*w//6),
-        (5*h//6, w//6), (5*h//6, w//2), (5*h//6, 5*w//6)
-    ]
+def cube_state_to_string(state):
+    """Convert session state cube dict to 54-char Kociemba string."""
+    result = ''
+    for face_key, _, _, _ in FACES:
+        for c in state[face_key]:
+            result += COLOR_MAP[c][2]
+    return result
 
-    colors = []
-    for y, x in positions:
-        hsv_value = hsv_frame[y, x]
-        color = color_detect.fun(hsv_value)
-        colors.append(color)
 
-    # Force center to be the expected color for this face
-    colors[4] = FACES[face_key]['color']
+def validate_cube_string(s):
+    """Check each Kociemba letter appears exactly 9 times."""
+    for letter in 'URFDLB':
+        if s.count(letter) != 9:
+            return False
+    return True
 
-    return colors
 
-def draw_face_preview(colors):
-    """Create HTML for a 3x3 color grid preview."""
-    html = '<div style="display: grid; grid-template-columns: repeat(3, 40px); gap: 2px; margin: 10px 0;">'
-    for color in colors:
-        rgb = COLOR_RGB.get(color, '#808080')
-        html += f'<div style="width: 40px; height: 40px; background-color: {rgb}; border: 1px solid #333;"></div>'
+def random_scramble_state():
+    """Generate a random valid cube and return it as our color-key state dict."""
+    cube_str = tools.randomCube()
+    # Map kociemba letters back to our color keys
+    letter_to_color = {v[2]: k for k, v in COLOR_MAP.items()}
+    state = {}
+    idx = 0
+    for face_key, _, _, _ in FACES:
+        face_colors = []
+        for i in range(9):
+            face_colors.append(letter_to_color[cube_str[idx]])
+            idx += 1
+        state[face_key] = face_colors
+    return state
+
+
+def render_face_grid(colors, face_key, editable=True):
+    """Render a 3x3 face grid with color pickers."""
+    for row in range(3):
+        cols = st.columns(3)
+        for col in range(3):
+            idx = row * 3 + col
+            c = colors[idx]
+            _, hex_color, _ = COLOR_MAP[c]
+
+            with cols[col]:
+                if idx == 4 and editable:
+                    # Center is locked
+                    st.markdown(
+                        f'<div style="width:100%;aspect-ratio:1;background:{hex_color};'
+                        f'border:3px solid #333;border-radius:4px;display:flex;'
+                        f'align-items:center;justify-content:center;font-size:10px;'
+                        f'color:#333;font-weight:bold;">CENTER</div>',
+                        unsafe_allow_html=True,
+                    )
+                elif editable:
+                    new_c = st.selectbox(
+                        ' ', COLOR_OPTIONS,
+                        index=COLOR_OPTIONS.index(c),
+                        key=f'sel_{face_key}_{idx}',
+                        label_visibility='collapsed',
+                    )
+                    if new_c != c:
+                        st.session_state.cube[face_key][idx] = new_c
+                        st.rerun()
+                else:
+                    st.markdown(
+                        f'<div style="width:100%;aspect-ratio:1;background:{hex_color};'
+                        f'border:1px solid #555;border-radius:3px;"></div>',
+                        unsafe_allow_html=True,
+                    )
+
+
+def render_mini_face(colors):
+    """Render a tiny non-interactive face preview."""
+    html = '<div style="display:grid;grid-template-columns:repeat(3,18px);gap:1px;">'
+    for c in colors:
+        _, hex_color, _ = COLOR_MAP[c]
+        html += f'<div style="width:18px;height:18px;background:{hex_color};border:1px solid #444;border-radius:2px;"></div>'
     html += '</div>'
     return html
 
-# Initialize session state
+
+# ── Page Config ────────────────────────────────────────────────────
+
+st.set_page_config(
+    page_title="Rubik's Cube Solver — CIIR 2026",
+    page_icon="🧊",
+    layout="wide",
+)
+
+# ── Session State Init ─────────────────────────────────────────────
+
 if 'cube' not in st.session_state:
     st.session_state.cube = {
-        'up': ['white'] * 9,
-        'right': ['red'] * 9,
-        'front': ['blue'] * 9,
-        'down': ['yellow'] * 9,
-        'left': ['orange'] * 9,
-        'back': ['green'] * 9
+        'U': ['W'] * 9,
+        'R': ['R'] * 9,
+        'F': ['B'] * 9,
+        'D': ['Y'] * 9,
+        'L': ['O'] * 9,
+        'B': ['G'] * 9,
     }
 
-if 'captured_faces' not in st.session_state:
-    st.session_state.captured_faces = set()
+if 'results' not in st.session_state:
+    st.session_state.results = []
 
-# Instructions
-with st.expander("📖 Instructions", expanded=True):
-    st.markdown("""
-    **How to use:**
-    1. Hold your Rubik's cube with **White center facing UP** and **Blue center facing YOU**
-    2. Capture each face using the webcam below
-    3. Verify the detected colors match your cube
-    4. Click **Solve** to get the solution
+# ── Header ─────────────────────────────────────────────────────────
 
-    **Face order:** Upper → Right → Front → Down → Left → Back
-    """)
+st.title("Rubik's Cube Solver")
+st.markdown(
+    "**Improving Rubik's Cube Solving with Neural-Guided Move Ordering in IDA*** "
+    "— Akash Chakraborty & Atul Chaudhuri "
+    "*(Accepted: CIIR 2026, Springer LNNS)*"
+)
 
-# Create tabs for each face
-tabs = st.tabs([FACES[f]['name'] for f in FACE_ORDER])
+# ── Sidebar: Mode + Controls ──────────────────────────────────────
 
-for i, face_key in enumerate(FACE_ORDER):
-    with tabs[i]:
-        col1, col2 = st.columns([2, 1])
+with st.sidebar:
+    st.header("Solver Settings")
 
-        with col1:
-            st.subheader(f"📷 Capture {FACES[face_key]['name']}")
-            camera_input = st.camera_input(
-                f"Take a photo of the {FACES[face_key]['name']} face",
-                key=f"camera_{face_key}"
+    mode = st.radio(
+        "Solver Mode",
+        list(SOLVER_MODES.keys()),
+        index=1,
+        help="Choose which algorithm variant to use",
+    )
+    st.caption(SOLVER_MODES[mode]['desc'])
+
+    st.divider()
+
+    if st.button("Scramble", use_container_width=True, type='secondary'):
+        st.session_state.cube = random_scramble_state()
+        st.session_state.results = []
+        st.rerun()
+
+    if st.button("Reset (Solved)", use_container_width=True):
+        st.session_state.cube = {
+            'U': ['W'] * 9, 'R': ['R'] * 9, 'F': ['B'] * 9,
+            'D': ['Y'] * 9, 'L': ['O'] * 9, 'B': ['G'] * 9,
+        }
+        st.session_state.results = []
+        st.rerun()
+
+    st.divider()
+    st.header("Compare All Modes")
+    if st.button("Solve with ALL 4 modes", use_container_width=True, type='primary'):
+        cube_str = cube_state_to_string(st.session_state.cube)
+        if not validate_cube_string(cube_str):
+            st.error("Invalid cube — each color must appear exactly 9 times.")
+        else:
+            results = []
+            for m_name in SOLVER_MODES:
+                try:
+                    sol, ms = solve_with_mode(cube_str, m_name)
+                    moves = len(sol.split())
+                    results.append({
+                        'mode': m_name, 'moves': moves,
+                        'time_ms': ms, 'solution': sol,
+                    })
+                except Exception as e:
+                    results.append({
+                        'mode': m_name, 'moves': '-',
+                        'time_ms': 0, 'solution': str(e),
+                    })
+            st.session_state.results = results
+            st.rerun()
+
+    # Show comparison results
+    if st.session_state.results:
+        st.markdown("**Results:**")
+        for r in st.session_state.results:
+            if isinstance(r['moves'], int):
+                st.markdown(
+                    f"- **{r['mode']}**: {r['moves']} moves, "
+                    f"{r['time_ms']:.0f} ms"
+                )
+            else:
+                st.markdown(f"- **{r['mode']}**: timeout/error")
+
+# ── Main: Face Input ───────────────────────────────────────────────
+
+st.subheader("Enter Cube State")
+st.caption(
+    "Set each sticker color to match your physical cube. "
+    "Centers are locked. Or press **Scramble** for a random cube."
+)
+
+# Show faces in 2 rows of 3
+for row_start in range(0, 6, 3):
+    face_cols = st.columns(3)
+    for i in range(3):
+        face_idx = row_start + i
+        face_key, face_name, center_color, color_name = FACES[face_idx]
+        with face_cols[i]:
+            st.markdown(f"**{face_name}** ({color_name} center)")
+            render_face_grid(
+                st.session_state.cube[face_key],
+                face_key,
+                editable=True,
             )
 
-            if camera_input is not None:
-                image = Image.open(camera_input)
-                colors = extract_colors_from_image(image, face_key)
-                st.session_state.cube[face_key] = colors
-                st.session_state.captured_faces.add(face_key)
+# ── Solve Button ───────────────────────────────────────────────────
 
-        with col2:
-            st.subheader("Detected Colors")
-            colors = st.session_state.cube[face_key]
-            st.markdown(draw_face_preview(colors), unsafe_allow_html=True)
+st.divider()
 
-            # Manual color correction
-            st.markdown("**Manual correction:**")
-            color_options = list(COLOR_RGB.keys())
+col_solve, col_info = st.columns([1, 2])
 
-            cols = st.columns(3)
-            for j in range(9):
-                if j != 4:  # Skip center (locked)
-                    with cols[j % 3]:
-                        new_color = st.selectbox(
-                            f"Pos {j+1}",
-                            color_options,
-                            index=color_options.index(colors[j]),
-                            key=f"color_{face_key}_{j}"
-                        )
-                        st.session_state.cube[face_key][j] = new_color
+with col_solve:
+    solve_clicked = st.button(
+        f"Solve ({mode})",
+        type='primary',
+        use_container_width=True,
+    )
 
-# Solve section
-st.markdown("---")
-st.subheader("🧩 Solve")
+if solve_clicked:
+    cube_str = cube_state_to_string(st.session_state.cube)
 
-# Show cube preview
-st.markdown("**Current cube state:**")
-preview_cols = st.columns(6)
-for i, face_key in enumerate(FACE_ORDER):
-    with preview_cols[i]:
-        st.caption(FACES[face_key]['name'].split(' ')[0])
-        st.markdown(draw_face_preview(st.session_state.cube[face_key]), unsafe_allow_html=True)
-        if face_key in st.session_state.captured_faces:
-            st.success("✓ Captured")
-
-# Solve button
-if st.button("🔮 Solve Cube", type="primary", use_container_width=True):
-    # Build cube string
-    myCube = maker.cubeToString(st.session_state.cube, "")
-
-    st.info(f"Cube string: `{myCube}`")
-
-    # Validate
-    if not maker.check(myCube):
-        st.error("❌ Invalid cube configuration! Each color must appear exactly 9 times.")
-        counts = {c: myCube.count(c) for c in 'URFDLB'}
-        st.write("Color counts:", counts)
+    if not validate_cube_string(cube_str):
+        st.error("Invalid cube configuration — each color must appear exactly 9 times.")
     else:
-        try:
-            with st.spinner("Solving..."):
-                solution = solve_cube_compat(myCube)
+        with st.spinner(f"Solving with {mode}..."):
+            try:
+                solution, elapsed = solve_with_mode(cube_str, mode)
+                moves = solution.split()
 
-            st.success("✅ Solution found!")
-            st.markdown(f"### Solution: `{solution}`")
+                st.success(
+                    f"**{mode}**: {len(moves)} moves in {elapsed:.0f} ms"
+                )
+                st.code(solution, language=None)
 
-            # Break down moves
-            moves = solution.split()
-            st.markdown(f"**Total moves:** {len(moves)}")
+                st.markdown("**Step by step:**")
+                move_names = {
+                    'U': 'Up', 'D': 'Down', 'R': 'Right',
+                    'L': 'Left', 'F': 'Front', 'B': 'Back',
+                }
+                for j, mv in enumerate(moves):
+                    face_letter = mv[0]
+                    suffix = mv[1:] if len(mv) > 1 else ''
+                    direction = "clockwise 90"
+                    if suffix == "'":
+                        direction = "counter-clockwise 90"
+                    elif suffix == "2":
+                        direction = "180"
+                    face_full = move_names.get(face_letter, face_letter)
+                    st.markdown(
+                        f"{j+1}. **{mv}** — turn {face_full} face {direction}"
+                    )
 
-            st.markdown("**Step by step:**")
-            move_cols = st.columns(min(len(moves), 10))
-            for j, move in enumerate(moves):
-                with move_cols[j % 10]:
-                    st.markdown(f"**{j+1}.** {move}")
+            except Exception as e:
+                st.error(f"Could not solve: {e}")
 
-        except Exception as e:
-            st.error(f"❌ Could not solve: {e}")
-            st.info("Make sure the cube configuration is valid and solvable.")
+# ── Footer ─────────────────────────────────────────────────────────
 
-# Reset button
-if st.button("🔄 Reset"):
-    st.session_state.cube = {
-        'up': ['white'] * 9,
-        'right': ['red'] * 9,
-        'front': ['blue'] * 9,
-        'down': ['yellow'] * 9,
-        'left': ['orange'] * 9,
-        'back': ['green'] * 9
-    }
-    st.session_state.captured_faces = set()
-    st.rerun()
-
-# Footer
-st.markdown("---")
-st.caption("Built with Streamlit | Powered by Kociemba's two-phase algorithm")
+st.divider()
+st.caption(
+    "Powered by Kociemba's Two-Phase Algorithm with multi-solution search, "
+    "anytime mode, and neural move ordering. "
+    "[GitHub](https://github.com/Akash-Chakraborty/Rubik-s-Cube-Solver)"
+)

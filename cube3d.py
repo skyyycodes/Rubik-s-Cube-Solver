@@ -22,12 +22,12 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib.patches as mpatches
 from matplotlib.widgets import Button
 
-try:
-    # Repository layout: ./kociemba/kociemba exposes the enhanced solver.
-    from kociemba.kociemba import solve as kociemba_solve
-except ImportError:
-    # Fallback for pip package that exports solve at top-level.
-    from kociemba import solve as kociemba_solve
+import sys as _sys
+from pathlib import Path as _Path
+# Ensure the local enhanced kociemba is found before the pip version
+_sys.path.insert(0, str(_Path(__file__).resolve().parent / 'kociemba'))
+from kociemba import solve as kociemba_solve
+from kociemba.pykociemba import tools as _ktools
 
 
 def solve_cube_compat(cube_string, mode='k5'):
@@ -36,7 +36,7 @@ def solve_cube_compat(cube_string, mode='k5'):
     Modes:
         'baseline' — K=1, no extras (original Kociemba)
         'k5'       — K=5 multi-solution search
-        'anytime'  — K=5 + 0.5 s time budget
+        'anytime'  — K=5 + 2 s time budget
         'neural'   — K=5 + LUT-based neural move ordering
     """
     try:
@@ -146,7 +146,7 @@ class RubiksCube3D:
         self.solve_mode_labels = {
             'baseline': 'Baseline (K=1)',
             'k5':       'Multi-Solution (K=5)',
-            'anytime':  'Anytime (K=5, 0.5s)',
+            'anytime':  'Anytime (K=5, 2s)',
             'neural':   'Neural LUT (K=5)',
         }
 

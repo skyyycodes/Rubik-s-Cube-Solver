@@ -39,6 +39,7 @@ Thumbs.db
 
 # Project specific
 *.pkl
+!kociemba/kociemba/neural_model.pkl
 *.pyc
 assets/
 
@@ -46,3 +47,26 @@ assets/
 kociemba/kociemba/ckociemba/*.o
 kociemba/kociemba/ckociemba/*.so
 kociemba/kociemba/ckociemba/*.dylib
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.idx
+*.ind
+*.ilg
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+missfont.log
+
+# Ephemeral run logs
+benchmark.log
+benchmark_run.log
+train_*.log
+train_*.log.attempt*

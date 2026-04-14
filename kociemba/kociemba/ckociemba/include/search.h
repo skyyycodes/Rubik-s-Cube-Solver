@@ -51,6 +51,15 @@ char* solutionToString(search_t* search, int length, int depthPhase1);
  */
 char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, const char* cache_dir);
 
+// Same as solution() but orders Phase-1 children at each node by their pruning-table
+// heuristic h ascending (oracle "h_sort" strategy). Still finds the first IDA* solution;
+// used to measure whether move ordering yields a wall-clock win in the native backend.
+char* solution_hsort(char* facelets, int maxDepth, long timeOut, int useSeparator, const char* cache_dir);
+
+// Phase-1 node counter. Reset at the start of every solve/solution_hsort call; read
+// afterwards to measure expansion count.
+extern long g_phase1_nodes;
+
 // Apply phase2 of algorithm and return the combined phase1 and phase2 depth. In phase2, only the moves
 // U,D,R2,F2,L2 and B2 are allowed.
 int totalDepth(search_t* search, int depthPhase1, int maxDepth);

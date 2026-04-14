@@ -202,7 +202,7 @@ def generate_training_data(n_samples=100000, max_scramble_length=25):
             power = last_move % 3
 
             # Inverse power: 0->2, 1->1, 2->0
-            inv_power = (4 - power - 1) % 3
+            inv_power = 2 - power
             good_move = axis * 3 + inv_power
 
             # Extract features (normalized coordinates)

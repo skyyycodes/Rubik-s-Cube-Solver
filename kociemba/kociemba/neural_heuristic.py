@@ -741,7 +741,7 @@ class NeuralMoveTrainer:
                 # power 0 (90°) -> power 2 (270°)
                 # power 1 (180°) -> power 1 (180°)
                 # power 2 (270°) -> power 0 (90°)
-                inv_power = (4 - power - 1) % 3
+                inv_power = 2 - power
                 good_move = axis * 3 + inv_power
 
                 # Extract features

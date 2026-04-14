@@ -9,6 +9,8 @@
 #define MIN(a, b) (((a)<(b))?(a):(b))
 #define MAX(a, b) (((a)>(b))?(a):(b))
 
+long g_phase1_nodes = 0;
+
 char* solutionToString(search_t* search, int length, int depthPhase1)
 {
     char* s = (char*) calloc(length * 3 + 5, 1);
@@ -130,6 +132,7 @@ char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, con
     busy = 0;
     depthPhase1 = 1;
 
+    g_phase1_nodes = 0;
     tStart = time(NULL);
 
     // +++++++++++++++++++ Main loop ++++++++++++++++++++++++++++++++++++++++++
@@ -176,6 +179,7 @@ char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, con
 
         // +++++++++++++ compute new coordinates and new minDistPhase1 ++++++++++
         // if minDistPhase1 =0, the H subgroup is reached
+        g_phase1_nodes++;
         mv = 3 * search->ax[n] + search->po[n] - 1;
         search->flip[n + 1] = flipMove[search->flip[n]][mv];
         search->twist[n + 1] = twistMove[search->twist[n]][mv];
@@ -310,6 +314,186 @@ int totalDepth(search_t* search, int depthPhase1, int maxDepth)
 
     } while (search->minDistPhase2[n + 1] != 0);
     return depthPhase1 + depthPhase2;
+}
+
+// ========================================================================
+// h_sort (oracle move ordering) Phase 1 — recursive IDA* variant.
+// At every node we expand all 18 move candidates, compute each child's
+// pruning-table h (admissible Phase 1 heuristic), and visit them in
+// ascending-h order. This lets the native backend test whether the
+// ordering ceiling (measured as 1.66x in Python) still pays off once the
+// per-lookup cost drops from microseconds to nanoseconds.
+// ========================================================================
+
+typedef struct {
+    int h;
+    int ax;
+    int po;
+    int nf;
+    int nt;
+    int ns;
+} hsort_cand_t;
+
+static int hsort_phase1(search_t* search, int n, int depthPhase1, int maxDepth,
+                        time_t tStart, long timeOut, int* out_sol)
+{
+    if (time(NULL) - tStart > timeOut) return -1;
+
+    int parent_ax = (n > 0) ? search->ax[n - 1] : -99;
+    hsort_cand_t scored[18];
+    int nc = 0;
+
+    // Enumerate all Phase-1 children after the parent-axis filter. Every child
+    // whose coordinates we compute is counted as a Phase-1 node expansion, to
+    // match the baseline solution()'s g_phase1_nodes++ accounting.
+    for (int ax = 0; ax < 6; ax++) {
+        if (n > 0 && (parent_ax == ax || parent_ax - 3 == ax)) continue;
+        for (int po = 1; po <= 3; po++) {
+            int mv = 3 * ax + (po - 1);
+            int nf = flipMove[search->flip[n]][mv];
+            int nt = twistMove[search->twist[n]][mv];
+            int ns = FRtoBR_Move[search->slice[n] * 24][mv] / 24;
+            int h = MAX(
+                getPruning(Slice_Flip_Prun, N_SLICE1 * nf + ns),
+                getPruning(Slice_Twist_Prun, N_SLICE1 * nt + ns)
+            );
+            g_phase1_nodes++; // count every expanded child, like the baseline
+            scored[nc].h = h;
+            scored[nc].ax = ax;
+            scored[nc].po = po;
+            scored[nc].nf = nf;
+            scored[nc].nt = nt;
+            scored[nc].ns = ns;
+            nc++;
+        }
+    }
+
+    // insertion sort by h ascending (nc <= 15)
+    for (int i = 1; i < nc; i++) {
+        hsort_cand_t x = scored[i];
+        int j = i;
+        while (j > 0 && scored[j - 1].h > x.h) {
+            scored[j] = scored[j - 1];
+            j--;
+        }
+        scored[j] = x;
+    }
+
+    for (int i = 0; i < nc; i++) {
+        hsort_cand_t c = scored[i];
+        int budget = depthPhase1 - (n + 1);
+        if (c.h > budget) continue; // admissibility prune (already counted above)
+
+        search->ax[n] = c.ax;
+        search->po[n] = c.po;
+        search->flip[n + 1] = c.nf;
+        search->twist[n + 1] = c.nt;
+        search->slice[n + 1] = c.ns;
+        search->minDistPhase1[n + 1] = c.h;
+
+        if (n + 1 == depthPhase1) {
+            if (c.h != 0) continue;
+            int s = totalDepth(search, depthPhase1, maxDepth);
+            if (s >= 0) {
+                if (s == depthPhase1 ||
+                    (search->ax[depthPhase1 - 1] != search->ax[depthPhase1] &&
+                     search->ax[depthPhase1 - 1] != search->ax[depthPhase1] + 3)) {
+                    *out_sol = s;
+                    return 1;
+                }
+            }
+            continue;
+        }
+
+        int rc = hsort_phase1(search, n + 1, depthPhase1, maxDepth, tStart, timeOut, out_sol);
+        if (rc == 1) return 1;
+        if (rc == -1) return -1;
+    }
+
+    return 0;
+}
+
+char* solution_hsort(char* facelets, int maxDepth, long timeOut, int useSeparator, const char* cache_dir)
+{
+    search_t* search = (search_t*) calloc(1, sizeof(search_t));
+    facecube_t* fc;
+    cubiecube_t* cc;
+    coordcube_t* c;
+
+    int s, i;
+    int count[6] = {0};
+    time_t tStart;
+
+    if (PRUNING_INITED == 0) {
+        initPruning(cache_dir);
+    }
+
+    for (i = 0; i < 54; i++)
+        switch (facelets[i]) {
+            case 'U': count[U]++; break;
+            case 'R': count[R]++; break;
+            case 'F': count[F]++; break;
+            case 'D': count[D]++; break;
+            case 'L': count[L]++; break;
+            case 'B': count[B]++; break;
+        }
+    for (i = 0; i < 6; i++)
+        if (count[i] != 9) { free(search); return NULL; }
+
+    fc = get_facecube_fromstring(facelets);
+    cc = toCubieCube(fc);
+    if ((s = verify(cc)) != 0) { free(search); return NULL; }
+
+    c = get_coordcube(cc);
+    search->flip[0] = c->flip;
+    search->twist[0] = c->twist;
+    search->parity[0] = c->parity;
+    search->slice[0] = c->FRtoBR / 24;
+    search->URFtoDLF[0] = c->URFtoDLF;
+    search->FRtoBR[0] = c->FRtoBR;
+    search->URtoUL[0] = c->URtoUL;
+    search->UBtoDF[0] = c->UBtoDF;
+    search->minDistPhase1[0] = MAX(
+        getPruning(Slice_Flip_Prun, N_SLICE1 * search->flip[0] + search->slice[0]),
+        getPruning(Slice_Twist_Prun, N_SLICE1 * search->twist[0] + search->slice[0])
+    );
+
+    g_phase1_nodes = 0;
+    tStart = time(NULL);
+
+    int depthPhase1;
+    int sol_len = -1;
+    int rc = 0;
+    // Start iterative deepening at 1 to match baseline solution(). The
+    // root-h seeded start would be a free bonus orthogonal to move ordering.
+    for (depthPhase1 = 1; depthPhase1 <= maxDepth; depthPhase1++) {
+        rc = hsort_phase1(search, 0, depthPhase1, maxDepth, tStart, timeOut, &sol_len);
+        if (rc == 1) {
+            char* res;
+            free((void*) fc);
+            free((void*) cc);
+            free((void*) c);
+            if (useSeparator) {
+                res = solutionToString(search, sol_len, depthPhase1);
+            } else {
+                res = solutionToString(search, sol_len, -1);
+            }
+            free((void*) search);
+            return res;
+        }
+        if (rc == -1) {
+            free((void*) fc);
+            free((void*) cc);
+            free((void*) c);
+            free((void*) search);
+            return NULL; // timeout
+        }
+    }
+    free((void*) fc);
+    free((void*) cc);
+    free((void*) c);
+    free((void*) search);
+    return NULL;
 }
 
 void patternize(char* facelets, char* pattern, char* patternized)

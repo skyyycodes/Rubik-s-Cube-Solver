@@ -160,9 +160,13 @@ def run_benchmark(scrambles: list, max_phase1: int = 1, timeout: int = 5000,
                                   neural_depth_cutoff, collect_stats)
         results.append(result)
 
+        # Always record wall-clock latency, even for failures. Excluding
+        # timeouts makes the mean/p95/p99 look artificially healthy --
+        # the worst cases are exactly the ones we need to see.
+        times.append(result['time_ms'])
+
         if result['success']:
             move_counts.append(result['moves'])
-            times.append(result['time_ms'])
             if 'stats' in result and result['stats']:
                 all_nodes.append(result['stats']['nodes_expanded'])
                 all_phase1_nodes.append(result['stats']['phase1_nodes'])
@@ -427,7 +431,7 @@ def main():
                         help='Use neural network for move ordering (requires trained model)')
     # ── New research flags ──
     parser.add_argument('--neural-strategy', type=str, default='none',
-                        choices=['none', 'move_order', 'probabilistic', 'adaptive'],
+                        choices=['none', 'move_order', 'probabilistic', 'adaptive', 'h_sort'],
                         help='Neural integration strategy for single run')
     parser.add_argument('--neural-strategies', type=str, nargs='*', default=None,
                         help='Compare multiple neural strategies (e.g. none move_order probabilistic adaptive)')

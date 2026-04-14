@@ -52,6 +52,7 @@ NEURAL_STRATEGY_MOVE_ORDER = 'move_order'  # Strategy A: neural move ordering on
 NEURAL_STRATEGY_PROBABILISTIC = 'probabilistic'  # Strategy B: probabilistic sampling
 NEURAL_STRATEGY_ADAPTIVE = 'adaptive'      # Strategy C: depth-adaptive ordering
 NEURAL_STRATEGY_LUT = 'lut'               # Strategy D: precomputed LUT (O(1) lookup)
+NEURAL_STRATEGY_H_SORT = 'h_sort'          # Strategy E: oracle sort by pruning-table h
 
 
 class Search(object):
@@ -156,7 +157,9 @@ class Search(object):
         When neural ordering is active, the moves are sorted by the
         neural model's predicted quality; otherwise they follow the
         default fixed ordering.  The 'lut' strategy replaces per-node
-        neural inference with an O(1) lookup table access.
+        neural inference with an O(1) lookup table access.  The
+        'h_sort' strategy uses pruning-table h directly as the ordering
+        score (oracle min-h ordering, no neural network involved).
 
         Args:
             parent_ax: axis of the parent move (-1 for root)
@@ -167,6 +170,8 @@ class Search(object):
         # Get ordered moves based on strategy
         if self.neural_strategy == NEURAL_STRATEGY_LUT and self._lut is not None:
             ordered = self._lut_ordered_moves(n)
+        elif self.neural_strategy == NEURAL_STRATEGY_H_SORT:
+            ordered = self._h_sort_ordered_moves(n)
         elif (self.use_neural and
                 self.neural_strategy != NEURAL_STRATEGY_NONE and
                 self.neural_move_model is not None and
@@ -178,6 +183,40 @@ class Search(object):
         # Filter: skip same-axis and opposite-axis-when-lower (Kociemba pruning)
         return [(ax, po) for ax, po in ordered
                 if ax != parent_ax and ax != parent_ax - 3]
+
+    def _h_sort_ordered_moves(self, n):
+        """
+        Oracle move ordering: sort the 18 Phase-1 moves by the pruning-table
+        h-value of the resulting child, ascending. This achieves the
+        p_top = 0.65 ceiling identified by measure_headroom.py --- no
+        scalar-score policy can beat it for admissibility-preserving
+        ordering. Cost: two getPruning calls per child (~50 ns each).
+        """
+        twist_n = self.twist[n]
+        flip_n = self.flip[n]
+        slice_n = self.slice[n]  # already the UD-slice coord (FRtoBR // 24)
+        scored = [None] * 18
+        for ax in range(6):
+            for po in range(1, 4):
+                mv = 3 * ax + (po - 1)
+                new_twist = CoordCube.twistMove[twist_n][mv]
+                new_flip = CoordCube.flipMove[flip_n][mv]
+                # slice_n * 24 picks a representative FRtoBR in the slice class;
+                # FRtoBR_Move maps it to a new FRtoBR whose //24 is the new slice.
+                new_slice = CoordCube.FRtoBR_Move[slice_n * 24][mv] // 24
+                h = max(
+                    getPruning(
+                        CoordCube.Slice_Flip_Prun,
+                        CoordCube.N_SLICE1 * new_flip + new_slice,
+                    ),
+                    getPruning(
+                        CoordCube.Slice_Twist_Prun,
+                        CoordCube.N_SLICE1 * new_twist + new_slice,
+                    ),
+                )
+                scored[mv] = (h, ax, po)
+        scored.sort(key=lambda t: t[0])
+        return [(ax, po) for _, ax, po in scored]
 
     def _neural_ordered_moves(self, n):
         """Get neural-network-ordered moves for node n. Returns list of (axis, power)."""
@@ -314,6 +353,11 @@ class Search(object):
                 except Exception:
                     pass
             self._lut = _neural_move_lut
+        elif neural_strategy == NEURAL_STRATEGY_H_SORT:
+            # h_sort is an oracle strategy that uses the pruning tables
+            # directly; no neural model is needed, but we still route
+            # through the non-default move-ordering path.
+            self.neural_strategy = NEURAL_STRATEGY_H_SORT
         elif use_neural and neural_strategy != NEURAL_STRATEGY_NONE:
             self.neural_strategy = neural_strategy
         elif use_neural:
@@ -385,7 +429,13 @@ class Search(object):
         self._move_orders[0] = self._get_phase1_move_list(-1, 0, 0, depthPhase1)
         self._move_idx[0] = -1  # will be advanced to 0 on first iteration
 
+        # Make timeout state visible to totalDepth() so Phase 2 honours the
+        # same wall-clock budget the outer loop does. Without this, a cube
+        # that enters a deep Phase 2 search could run minutes past the budget.
         tStart = time.time()
+        self._tStart = tStart
+        self._timeOut = timeOut
+        self._timed_out = False
 
         # +++++++++++++++++++ Main loop (neural-aware) ++++++++++++++++++++++++++
         while True:
@@ -503,6 +553,14 @@ class Search(object):
                     self.phase1_endpoints_found += 1
                     # Use best_length - 1 as bound to only find better solutions
                     s = self.totalDepth(depthPhase1, self.best_length - 1 if self.best_solution else maxDepth)
+
+                    # Phase 2 may have bailed out on the wall-clock budget. If so,
+                    # return whatever is best so far; do not try more endpoints.
+                    if self._timed_out:
+                        if self.best_solution:
+                            return self.best_solution
+                        return "Error 8"
+
                     if s >= 0:
                         if (s == depthPhase1
                             or (
@@ -521,12 +579,12 @@ class Search(object):
                             if max_phase1_solutions <= 1:
                                 return current_solution
 
-                            # Stop if we've found enough solutions or hit optimal (can't do better)
+                            # Stop only when we have explored the full K budget.
+                            # A solution of length <=20 is NOT per-instance optimal:
+                            # God's Number (20) is the worst-case bound across cubes,
+                            # not the optimum for this particular cube. Cutting off
+                            # here poisons the "best of K" statistic.
                             if self.solutions_found >= max_phase1_solutions:
-                                return self.best_solution
-
-                            # Early exit if solution is at or below theoretical optimal (20 moves)
-                            if self.best_length <= 20:
                                 return self.best_solution
 
             # --- Descend if depth budget allows ---
@@ -654,6 +712,15 @@ class Search(object):
             # Instrumentation: count Phase 2 node expansion
             self.nodes_expanded += 1
             self.phase2_nodes += 1
+
+            # Wall-clock check: Phase 2 can expand millions of nodes on
+            # hard instances. Without this check, a single bad cube could
+            # blow the advertised timeout by 100x. Sample every 4096 nodes
+            # to keep time.time() overhead negligible.
+            if (self.phase2_nodes & 4095) == 0:
+                if time.time() - self._tStart > self._timeOut:
+                    self._timed_out = True
+                    return -1
 
             self.minDistPhase2[n + 1] = max(
                 getPruning(

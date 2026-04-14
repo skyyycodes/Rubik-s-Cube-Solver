@@ -1,0 +1,718 @@
+{
+  "seed": 42,
+  "n": 50,
+  "baseline": [
+    {
+      "cube": "RLULUBDDDLRFFRRUFLRFFBFUFBLRDFUDLURBUDBRLLBBDRUBDBUDFL",
+      "solution": "R D F D F' U' D2 F' L F D' B2 U L2 U' B2 U2 L2 D B2",
+      "moves": 20,
+      "time_ms": 0.5104159972688649,
+      "nodes": 35462
+    },
+    {
+      "cube": "LLRLUURDURRBRRBLRLDBFBFDLFFBRUUDBRDDDUFDLUDFUUFBLBLFFB",
+      "solution": "U2 R' U' F B U F U2 L2 D' B D' L2 F2 L2 D2 F2 U2 F2 U L2",
+      "moves": 21,
+      "time_ms": 5.8429999990039505,
+      "nodes": 335261
+    },
+    {
+      "cube": "BRFUUDDBDFBLRRFBRLBLRLFDFRULBRDDURDUDLLBLFULUDFRUBUBFF",
+      "solution": "U F U F L2 F2 D F2 U R' D2 L U' B2 U' L2 F2 D L2 D2 R2 U'",
+      "moves": 22,
+      "time_ms": 28.70700000130455,
+      "nodes": 1919814
+    },
+    {
+      "cube": "LUDBUUUULUFRDRLBUFBLFDFFLFLFRUDDRBRRDRRLLLRBDFBBFBBUDD",
+      "solution": "U F2 B2 D B2 L2 D' B' U2 R' B D' R2 F2 U2 B2 R2 F2 D F2 B2",
+      "moves": 21,
+      "time_ms": 4.934749998938059,
+      "nodes": 312013
+    },
+    {
+      "cube": "FBUUUFLUURLBBRDBRLFBFLFDBFRRUDLDFFRBLRDLLBDUULRUFBDDDR",
+      "solution": "U2 L2 F2 U B' U F2 R U L' U2 L2 U F2 D R2 U2 F2 D L2",
+      "moves": 20,
+      "time_ms": 0.3071669998462312,
+      "nodes": 16548
+    },
+    {
+      "cube": "FFFDULRUUBDULRBFDUBLRRFFUUDLBRFDFDUFDBDRLBLUBLRLLBDRRB",
+      "solution": "U R U2 L' D F R U F R L2 B U' F2 U' R2 U2 D R2 F2 B2 D",
+      "moves": 22,
+      "time_ms": 16.81720900160144,
+      "nodes": 1083994
+    },
+    {
+      "cube": "RDDRUBLDDRUFLRUFBBDBBLFULBUBLLFDRRFUFUBFLDFRULRUFBDRLD",
+      "solution": "U F D B2 R' B U' D R2 D R D' R2 L2 U' F2 U' B2 R2 F2 L2",
+      "moves": 21,
+      "time_ms": 1.7313329990429338,
+      "nodes": 107135
+    },
+    {
+      "cube": "ULURUDUURBFBDRRBRFFFDUFLFLDRBLUDBDBRBFLRLBFLDLFRDBUUDL",
+      "solution": "R' U B' U D2 L' D' B2 R' D F' B2 L2 U F2 U F2 L2 U' R2 U2",
+      "moves": 21,
+      "time_ms": 8.233708002080675,
+      "nodes": 559165
+    },
+    {
+      "cube": "RURRUBFDRDRULRBLUDDBFRFFFLULDBDDLUFLBULBLDRFUFFDLBUBRB",
+      "solution": "R F2 B2 U F2 U2 D' F' B2 R2 L' U2 L2 B2 D F2 B2 L2 D' B2 D",
+      "moves": 21,
+      "time_ms": 4.137416999583365,
+      "nodes": 280340
+    },
+    {
+      "cube": "LRDFUURBDBFBLRBRBLUULUFUDFFLLDLDDRRFBDBFLRUDFRBULBRUDF",
+      "solution": "L' U' D' R' F' D B2 U' F D' B U' B2 U B2 D2 F2 D F2 R2",
+      "moves": 20,
+      "time_ms": 9.428041001228848,
+      "nodes": 658247
+    },
+    {
+      "cube": "RUFBUULLFDRRFRRFDBUDLLFDBRDLDRLDBBRRUUFLLBLUDUFBFBFDBU",
+      "solution": "L2 U2 L' B2 D' L F' R F' L B' U L2 D R2 B2 U2 R2 U' L2 D'",
+      "moves": 21,
+      "time_ms": 17.748583002685336,
+      "nodes": 663243
+    },
+    {
+      "cube": "ULBDUUBFLDBLFRRFFRDUBUFRBBRRRUBDDDLFFRRLLLFDUUDLUBFDBL",
+      "solution": "U2 B' R' U' B R' B U' L' F' U2 B2 D R2 B2 U' B2 R2 U2 R2",
+      "moves": 20,
+      "time_ms": 0.4242089999024756,
+      "nodes": 21958
+    },
+    {
+      "cube": "RDFFURBRRUDLRRLULBUBBLFUUFFFURLDFBDDDRLBLDRULDBFBBULFD",
+      "solution": "U2 F2 L2 U' F2 U R' F U2 L' F' R2 U L2 U' B2 L2 U2 D F2 U",
+      "moves": 21,
+      "time_ms": 7.250749997183448,
+      "nodes": 386460
+    },
+    {
+      "cube": "LFRRURDUUFFULRRFLLRFLBFULDDFBRBDDRDBBUBRLLBUDFLUDBBDFU",
+      "solution": "U D' R' U R B R' U L B2 L' B' D R2 U2 F2 R2 L2 F2 U B2 U'",
+      "moves": 22,
+      "time_ms": 38.72724999746424,
+      "nodes": 2552153
+    },
+    {
+      "cube": "URLUUDFFLDRDLRDUBRLLBFFURBRFDBBDURFFLFUBLDDLUFUBLBRDRB",
+      "solution": "L2 F' R2 B' L' F2 U' D R F' B2 U R2 U B2 R2 B2 D' R2 U'",
+      "moves": 20,
+      "time_ms": 1.9336250006745104,
+      "nodes": 119498
+    },
+    {
+      "cube": "FUFRULUULDFURRDRRRLLBDFDDLBRDUUDBDLUDFBFLFRRBLBLBBUFBF",
+      "solution": "U F2 L B R D2 F U B2 L U2 F' B2 D2 B2 U' F2 R2 D2 R2 F2 R2",
+      "moves": 22,
+      "time_ms": 15.48108400311321,
+      "nodes": 1075803
+    },
+    {
+      "cube": "BUUFURBLDFBLURBDFURURLFRLLFDDLRDLUUBDDUFLBFDBFFRDBRLBR",
+      "solution": "L' U R2 D R U2 R D2 B' D F' B2 L2 D R2 D2 R2 F2 D R2 D'",
+      "moves": 21,
+      "time_ms": 9.445749998121755,
+      "nodes": 636818
+    },
+    {
+      "cube": "LLDRUBBLFULFRRFDBUUDRBFDBDRRFFFDRRDLDULLLUDUULFBRBUFBB",
+      "solution": "R2 F' D2 L2 B2 L' U' R' L2 B' U F2 D2 R2 U' R2 F2 D' L2 D2",
+      "moves": 20,
+      "time_ms": 0.3792079987761099,
+      "nodes": 25900
+    },
+    {
+      "cube": "UUUFURDFFRBFLRBDULRDDLFDUDFBBLDDLDFUFLBULBLRRRFLUBRBRB",
+      "solution": "U2 D B R U' R2 L U2 D' L2 B' D2 F2 D F2 B2 U' B2 D F2 D",
+      "moves": 21,
+      "time_ms": 1.8759999984467868,
+      "nodes": 127773
+    },
+    {
+      "cube": "LRLFULBRDRBFFRFUDLUBBUFRFUFRBRDDLUFDDULULRRBDUDBDBLFLB",
+      "solution": "B2 D2 L F U' B L' F2 U' D2 R' U B2 D B2 U L2 D' B2 D'",
+      "moves": 20,
+      "time_ms": 16.81375000043772,
+      "nodes": 1081490
+    },
+    {
+      "cube": "DRLFUDRLLBLBURBBRUDUULFFFLRUBDDDBRRLLRFDLFBBRDDFUBFFUU",
+      "solution": "U2 F' R2 B R L D' F2 U' F2 L U2 B2 U F2 R2 U F2 U2 B2 U2",
+      "moves": 21,
+      "time_ms": 2.6760410000861157,
+      "nodes": 178206
+    },
+    {
+      "cube": "LUBLURRBRBFDBRDRDDFDDBFRDFBLLUFDRLLRBDUULLFUFLRUFBBFUU",
+      "solution": "F2 B' R L' F' R U L2 U2 D' F' R2 L2 B2 D B2 R2 U' D2 B2 D",
+      "moves": 21,
+      "time_ms": 5.479458999616327,
+      "nodes": 370575
+    },
+    {
+      "cube": "LUDBULFDBDBLDRDBUFLRRUFLULULFRDDBFFDFRULLRRBBBFDFBURRU",
+      "solution": "F' B2 U2 R U B2 L F L U2 B U F2 D B2 D F2 U F2 U2 R2",
+      "moves": 21,
+      "time_ms": 9.030041001096833,
+      "nodes": 631223
+    },
+    {
+      "cube": "LLLUURFBULFDURBDDDLDBUFRUDBBRRLDFRURDFULLLUDRFFBRBBFBF",
+      "solution": "R2 U D R' L F L B2 D R B U' L2 D' F2 B2 U' F2 B2 U2 F2",
+      "moves": 21,
+      "time_ms": 4.328457998781232,
+      "nodes": 274896
+    },
+    {
+      "cube": "LDUUUBBFRBDLDRFUBBRLDFFFDBFFLRRDUFDLDLURLULURFLBRBBURD",
+      "solution": "U' L B L U' L U' F2 R2 F L U' R2 D2 B2 R2 D L2 U R2 L2",
+      "moves": 21,
+      "time_ms": 5.9875830011151265,
+      "nodes": 419575
+    },
+    {
+      "cube": "BLRDUFBDRBUUFRUFBRRLDRFRLBLUUDDDRDFFUBURLDLFFFBLLBUDLB",
+      "solution": "R U' B2 R U F' U2 R' U2 R' B' R2 B2 R2 U D B2 L2 B2 U' L2",
+      "moves": 21,
+      "time_ms": 9.466791998420376,
+      "nodes": 598671
+    },
+    {
+      "cube": "FRLUUBFRBLRUDRDLFBRUDDFBRLDFBFLDDUURLBDFLRRUUBFULBLDFB",
+      "solution": "F' R' D2 R F2 B D' B' L2 B R' F2 U B2 U' F2 R2 U' L2 U",
+      "moves": 20,
+      "time_ms": 11.8428749992745,
+      "nodes": 805959
+    },
+    {
+      "cube": "DFRLUFBFBUDFFRBRUBLLLLFRUBUFUFDDRLLURDDBLUDRLDUBRBDRBF",
+      "solution": "U2 R D2 R' F2 U2 F2 R' D' F' L' B' U2 L2 F2 U' F2 D L2 U2 B2 D",
+      "moves": 22,
+      "time_ms": 51.744000000326196,
+      "nodes": 3362246
+    },
+    {
+      "cube": "URRLUURRDRBURRDDDDDUBFFBULFBBLFDRBLLFUFBLULDRFFLLBDBFU",
+      "solution": "U2 L' F B2 R' B U' F U' R D F2 U' B2 L2 B2 R2 D L2 U2",
+      "moves": 20,
+      "time_ms": 0.389458000427112,
+      "nodes": 24785
+    },
+    {
+      "cube": "DLLRULLBULBBURDRUUUUBRFLRBUBDFDDRFURFFFFLBLLDDFRRBDBFD",
+      "solution": "U B2 L' F2 U' L2 U2 R F' B R2 L2 U' B2 D' B2 D L2 D2 B2",
+      "moves": 20,
+      "time_ms": 0.7605420032632537,
+      "nodes": 29726
+    },
+    {
+      "cube": "UDLDUDFLULBFRRUBRDRFBBFDRFUBURBDFDUFRLDBLULRDUFFRBLLLB",
+      "solution": "L' U2 D' B2 R B U' R' D R' B2 D F2 B2 R2 D2 F2 U2 F2 U'",
+      "moves": 20,
+      "time_ms": 3.7578750016109552,
+      "nodes": 212797
+    },
+    {
+      "cube": "BRRBUUBBLURFBRFRFFDDFUFRBDBLRUFDULURULRLLBDLDDFLDBDULF",
+      "solution": "D2 F2 D R' B2 L' U D2 R U2 F' L2 D' F2 B2 U D' F2 D' L2",
+      "moves": 20,
+      "time_ms": 17.0336250012042,
+      "nodes": 1145455
+    },
+    {
+      "cube": "LBDUUFUBBLUBDRFFBUFLDUFRRDDFFRLDRLLRBBLLLRDDURDURBFBUF",
+      "solution": "U' R B' L' F' U' B' D' R U' F' R2 U B2 U' R2 U2 L2 F2 L2 U2",
+      "moves": 21,
+      "time_ms": 2.315791996807093,
+      "nodes": 154127
+    },
+    {
+      "cube": "UBUBUFLRURURLRUBBRFUFBFFBDDUFLRDDDLDFUDFLLRDLBRLLBRBDF",
+      "solution": "U2 R' B' L U' F R2 B' R' L U L2 D' F2 U2 F2 L2 U D2 F2",
+      "moves": 20,
+      "time_ms": 0.5851659989275504,
+      "nodes": 29695
+    },
+    {
+      "cube": "BDRFUUUBFULBDRLUUDFRRBFFDLBLFLRDRDURLRLLLUBDFUBDBBDFFR",
+      "solution": "U R U2 D F R' D L F' D2 F' U2 L2 D2 F2 R2 U F2 U B2 D2",
+      "moves": 21,
+      "time_ms": 1.5430829989782069,
+      "nodes": 102718
+    },
+    {
+      "cube": "DBLFUURUULBFURRDRRURBFFLLBFDDLLDDRFDFRBULLUDBULRBBFBDF",
+      "solution": "U' D2 R L F R' L D' F' L2 D R2 U L2 F2 U' F2 R2 L2",
+      "moves": 19,
+      "time_ms": 0.2707499988900963,
+      "nodes": 7785
+    },
+    {
+      "cube": "DUBRULLUURDLRRDUBBDFFUFDBBLDDFFDLLRUFBBULLDLRURRFBBRFF",
+      "solution": "U B L F' L2 U F L B2 D' F R2 F2 U F2 U B2 U2 D' R2 L2",
+      "moves": 21,
+      "time_ms": 2.9209159984020516,
+      "nodes": 195746
+    },
+    {
+      "cube": "UFBUUBFDRBULBRULBRLFDUFRDFDBRFRDLFDBRLUBLFDDLULFRBDULR",
+      "solution": "U R2 U B' L' F' D' B R2 D B2 R U' B2 D' R2 U2 R2 B2 D2 L2 F2",
+      "moves": 22,
+      "time_ms": 17.892166000819998,
+      "nodes": 1183214
+    },
+    {
+      "cube": "URURULRRBUDFLRUDRRUBLUFFLBBFDRLDUBBFFDBFLBDUDRFLFBDDLL",
+      "solution": "R F D2 F' L B' D' F U2 D' L D F2 U2 B2 U L2 B2 U' F2 D2",
+      "moves": 21,
+      "time_ms": 5.776958001661114,
+      "nodes": 389697
+    },
+    {
+      "cube": "FRFBUFRFDLRURRUDLRULFFFDBBLDUBUDBBDFUDBRLDLLRLURFBBDLU",
+      "solution": "U2 D' R2 D' F L U D R2 U R' L2 D' F2 L2 F2 D' B2 D' L2 D'",
+      "moves": 21,
+      "time_ms": 3.2008330017561093,
+      "nodes": 215801
+    },
+    {
+      "cube": "FRRFUULDURBDDRRDUBUBFBFLDLRBBFLDFBFUDRFFLRLULBULDBLRDU",
+      "solution": "U R2 U2 D F L U B U' F' U' R U' B2 U B2 U F2 R2 L2",
+      "moves": 20,
+      "time_ms": 17.2892079972371,
+      "nodes": 1103375
+    },
+    {
+      "cube": "UFLRUDLUFDFBFRRULBUBLLFLBBFDRRRDBRBULFFULDFURDUBDBLRDD",
+      "solution": "U R L B' L U2 B D2 F B' U' F D R2 D' R2 D2 B2 U L2 U2 F2",
+      "moves": 22,
+      "time_ms": 20.363999999972293,
+      "nodes": 1347371
+    },
+    {
+      "cube": "UULBUFBFFRLBDRRFLFDDDLFBBURUFURDUUBLFRRLLDRDLDRLFBBDUB",
+      "solution": "U F L2 U' L B' U F2 L' U B L2 B2 L2 D' F2 U F2 B2 R2 F2",
+      "moves": 21,
+      "time_ms": 5.892167002457427,
+      "nodes": 400597
+    },
+    {
+      "cube": "UBBLURRFFUBLURUUFLDDRRFLDDRLRBUDRDFBFDFBLUBFFULLBBDDLR",
+      "solution": "U' F U2 L' F2 D R' U' B U' R2 L U R2 D2 R2 B2 L2 B2 U2 L2 U2",
+      "moves": 22,
+      "time_ms": 48.020500002166955,
+      "nodes": 3143299
+    },
+    {
+      "cube": "DLFDUDDBULBUFRFRDFBRBLFRDLFLUDUDRULRRFLULFRBFLBBUBRUDB",
+      "solution": "U2 R' U R F U' F' B R' D B' U2 D' R2 D R2 L2 F2 U2",
+      "moves": 19,
+      "time_ms": 3.082458999415394,
+      "nodes": 203128
+    },
+    {
+      "cube": "DLLDUFBRFRUFFRUUBFRBDDFDBLBDFLDDUDFRLLULLRLBRUUFRBBURB",
+      "solution": "L D' B' R B L B U2 B D2 L2 D B2 U' F2 D' F2 L2 B2",
+      "moves": 19,
+      "time_ms": 0.24337499780813232,
+      "nodes": 12278
+    },
+    {
+      "cube": "FFRDURDBDBUULRRDBURULLFDUBRLLFDDRDFRLRBBLUFFBFLUFBDBUL",
+      "solution": "U2 F R2 B L F2 U R2 L' U2 B R' B2 D2 R2 U' B2 D L2 U' R2 F2",
+      "moves": 22,
+      "time_ms": 36.31849999874248,
+      "nodes": 2376570
+    },
+    {
+      "cube": "BBFFUDDFBRBULRDFFFFRUBFDDRLBDDUDUULRDLRRLRBBLLLRFBUUUL",
+      "solution": "B2 L' F2 U D' L B R B D L U' F2 R2 U R2 D R2 B2 D L2",
+      "moves": 21,
+      "time_ms": 29.285749998962274,
+      "nodes": 1937504
+    },
+    {
+      "cube": "LFFLUBBBRUDRDRURBDUUBFFRURFFUDUDLBBLFFLDLDRFLURDLBLBRD",
+      "solution": "R' B' R D F' U2 L U' F L2 B D' L2 D2 R2 U' R2 D' R2 D2",
+      "moves": 20,
+      "time_ms": 14.086667000810849,
+      "nodes": 883644
+    },
+    {
+      "cube": "RFLLURRBDFUDLRBRUUBDRDFULRUBDFFDBLLLUFDDLLBRUFUBRBFFBD",
+      "solution": "U R2 B' R2 U R' U B R L' U2 B R2 U2 D' L2 F2 L2 D' R2 F2 D'",
+      "moves": 22,
+      "time_ms": 19.813874998362735,
+      "nodes": 1370823
+    }
+  ],
+  "hsort": [
+    {
+      "cube": "RLULUBDDDLRFFRRUFLRFFBFUFBLRDFUDLURBUDBRLLBBDRUBDBUDFL",
+      "solution": "R D F D F' U' D2 F' L F D' B2 U L2 U' B2 U2 L2 D B2",
+      "moves": 20,
+      "time_ms": 1.0336670020478778,
+      "nodes": 55326
+    },
+    {
+      "cube": "LLRLUURDURRBRRBLRLDBFBFDLFFBRUUDBRDDDUFDLUDFUUFBLBLFFB",
+      "solution": "U2 R' U' F B U F U2 L2 D' B D' L2 F2 L2 D2 F2 U2 F2 U L2",
+      "moves": 21,
+      "time_ms": 6.848082997748861,
+      "nodes": 321624
+    },
+    {
+      "cube": "BRFUUDDBDFBLRRFBRLBLRLFDFRULBRDDURDUDLLBLFULUDFRUBUBFF",
+      "solution": "B R U R2 D R B' L D' B' R2 L2 F2 D F2 U2 D' L2 U2 D L2",
+      "moves": 21,
+      "time_ms": 24.859290999302175,
+      "nodes": 1295421
+    },
+    {
+      "cube": "LUDBUUUULUFRDRLBUFBLFDFFLFLFRUDDRBRRDRRLLLRBDFBBFBBUDD",
+      "solution": "U2 B2 R2 U' F2 B' U2 R B2 U2 B' D' R2 B2 D' B2 L2 F2 U2",
+      "moves": 19,
+      "time_ms": 8.208999999624211,
+      "nodes": 404286
+    },
+    {
+      "cube": "FBUUUFLUURLBBRDBRLFBFLFDBFRRUDLDFFRBLRDLLBDUULRUFBDDDR",
+      "solution": "U2 L2 F2 U B' U F2 R U L' U2 L2 U F2 D R2 U2 F2 D L2",
+      "moves": 20,
+      "time_ms": 0.4202499985694885,
+      "nodes": 20673
+    },
+    {
+      "cube": "FFFDULRUUBDULRBFDUBLRRFFUUDLBRFDFDUFDBDRLBLUBLRLLBDRRB",
+      "solution": "U R U2 L' D F R U F R L2 B U' F2 U' R2 U2 D R2 F2 B2 D",
+      "moves": 22,
+      "time_ms": 28.081249998649582,
+      "nodes": 1383819
+    },
+    {
+      "cube": "RDDRUBLDDRUFLRUFBBDBBLFULBUBLLFDRRFUFUBFLDFRULRUFBDRLD",
+      "solution": "R2 F L U D' F' R2 D' R' D' L2 B2 U' B2 U2 F2 R2 U R2 B2",
+      "moves": 20,
+      "time_ms": 0.1686670002527535,
+      "nodes": 5985
+    },
+    {
+      "cube": "ULURUDUURBFBDRRBRFFFDUFLFLDRBLUDBDBRBFLRLBFLDLFRDBUUDL",
+      "solution": "R' U B' U D2 L' D' B2 R' D F' B2 L2 U F2 U F2 L2 U' R2 U2",
+      "moves": 21,
+      "time_ms": 10.391666000941768,
+      "nodes": 565644
+    },
+    {
+      "cube": "RURRUBFDRDRULRBLUDDBFRFFFLULDBDDLUFLBULBLDRFUFFDLBUBRB",
+      "solution": "R F2 B R2 U' B U' R' D' F B2 U' L2 D B2 U2 R2 D B2 D' B2",
+      "moves": 21,
+      "time_ms": 4.622666998329805,
+      "nodes": 253824
+    },
+    {
+      "cube": "LRDFUURBDBFBLRBRBLUULUFUDFFLLDLDDRRFBDBFLRUDFRBULBRUDF",
+      "solution": "L' U' D' R' F' D B2 U' F D' B U' B2 U B2 D2 F2 D F2 R2",
+      "moves": 20,
+      "time_ms": 7.222542000818066,
+      "nodes": 393504
+    },
+    {
+      "cube": "RUFBUULLFDRRFRRFDBUDLLFDBRDLDRLDBBRRUUFLLBLUDUFBFBFDBU",
+      "solution": "L2 U2 L' B2 D' L F' R F' L B' U L2 D R2 B2 U2 R2 U' L2 D'",
+      "moves": 21,
+      "time_ms": 14.63800000055926,
+      "nodes": 470943
+    },
+    {
+      "cube": "ULBDUUBFLDBLFRRFFRDUBUFRBBRRRUBDDDLFFRRLLLFDUUDLUBFDBL",
+      "solution": "U2 B' R' U' B R' B U' L' F' U2 B2 D R2 B2 U' B2 R2 U2 R2",
+      "moves": 20,
+      "time_ms": 0.5495000004884787,
+      "nodes": 22050
+    },
+    {
+      "cube": "RDFFURBRRUDLRRLULBUBBLFUUFFFURLDFBDDDRLBLDRULDBFBBULFD",
+      "solution": "L B2 D' B D R D B' U2 D2 B U D2 B2 U2 R2 D' R2 D' F2 D",
+      "moves": 21,
+      "time_ms": 8.0466660001548,
+      "nodes": 415368
+    },
+    {
+      "cube": "LFRRURDUUFFULRRFLLRFLBFULDDFBRBDDRDBBUBRLLBUDFLUDBBDFU",
+      "solution": "U L' U2 B2 D R D F' D2 L U' R2 F2 R2 D R2 U' L2 D F2 U R2",
+      "moves": 22,
+      "time_ms": 33.35408299972187,
+      "nodes": 1673703
+    },
+    {
+      "cube": "URLUUDFFLDRDLRDUBRLLBFFURBRFDBBDURFFLFUBLDDLUFUBLBRDRB",
+      "solution": "L2 F' R2 B' L' F2 U' D R F' B2 U R2 U B2 R2 B2 D' R2 U'",
+      "moves": 20,
+      "time_ms": 0.48695900113671087,
+      "nodes": 20646
+    },
+    {
+      "cube": "FUFRULUULDFURRDRRRLLBDFDDLBRDUUDBDLUDFBFLFRRBLBLBBUFBF",
+      "solution": "U F2 L B R D2 F U B2 L U2 F' B2 D2 B2 U' F2 R2 D2 R2 F2 R2",
+      "moves": 22,
+      "time_ms": 17.347707998851547,
+      "nodes": 986409
+    },
+    {
+      "cube": "BUUFURBLDFBLURBDFURURLFRLLFDDLRDLUUBDDUFLBFDBFFRDBRLBR",
+      "solution": "L' U R2 D R U2 R D2 B' D F' B2 L2 D R2 D2 R2 F2 D R2 D'",
+      "moves": 21,
+      "time_ms": 12.069625001458917,
+      "nodes": 636075
+    },
+    {
+      "cube": "LLDRUBBLFULFRRFDBUUDRBFDBDRRFFFDRRDLDULLLUDUULFBRBUFBB",
+      "solution": "R2 F' D2 L2 B2 L' U' R' L2 B' U F2 D2 R2 U' R2 F2 D' L2 D2",
+      "moves": 20,
+      "time_ms": 0.5359999995562248,
+      "nodes": 29199
+    },
+    {
+      "cube": "UUUFURDFFRBFLRBDULRDDLFDUDFBBLDDLDFUFLBULBLRRRFLUBRBRB",
+      "solution": "U2 D B R U' R2 L U2 D' L2 B' D2 F2 D F2 B2 U' B2 D F2 D",
+      "moves": 21,
+      "time_ms": 12.952249999216292,
+      "nodes": 670539
+    },
+    {
+      "cube": "LRLFULBRDRBFFRFUDLUBBUFRFUFRBRDDLUFDDULULRRBDUDBDBLFLB",
+      "solution": "L F D' L F U F2 R' F' D' R2 U F2 D L2 U R2 F2 D2 L2",
+      "moves": 20,
+      "time_ms": 1.3425420002022292,
+      "nodes": 58944
+    },
+    {
+      "cube": "DRLFUDRLLBLBURBBRUDUULFFFLRUBDDDBRRLLRFDLFBBRDDFUBFFUU",
+      "solution": "U2 F' R2 B R L D' F2 U' F2 L U2 B2 U F2 R2 U F2 U2 B2 U2",
+      "moves": 21,
+      "time_ms": 11.202500001672888,
+      "nodes": 564219
+    },
+    {
+      "cube": "LUBLURRBRBFDBRDRDDFDDBFRDFBLLUFDRLLRBDUULLFUFLRUFBBFUU",
+      "solution": "F2 B' R L' F' R U L2 U2 D' F' R2 L2 B2 D B2 R2 U' D2 B2 D",
+      "moves": 21,
+      "time_ms": 2.7793750014097895,
+      "nodes": 146715
+    },
+    {
+      "cube": "LUDBULFDBDBLDRDBUFLRRUFLULULFRDDBFFDFRULLRRBBBFDFBURRU",
+      "solution": "L U F U' D' F2 U' B2 R U' B D B2 D' F2 U' R2 U B2 U2 F2",
+      "moves": 21,
+      "time_ms": 8.397917001275346,
+      "nodes": 454392
+    },
+    {
+      "cube": "LLLUURFBULFDURBDDDLDBUFRUDBBRRLDFRURDFULLLUDRFFBRBBFBF",
+      "solution": "R2 U D R' L F L B2 D R B U' L2 D' F2 B2 U' F2 B2 U2 F2",
+      "moves": 21,
+      "time_ms": 2.4335000016435515,
+      "nodes": 119382
+    },
+    {
+      "cube": "LDUUUBBFRBDLDRFUBBRLDFFFDBFFLRRDUFDLDLURLULURFLBRBBURD",
+      "solution": "U' L B L U' L U' F2 R2 F L U' R2 D2 B2 R2 D L2 U R2 L2",
+      "moves": 21,
+      "time_ms": 8.03250000171829,
+      "nodes": 442377
+    },
+    {
+      "cube": "BLRDUFBDRBUUFRUFBRRLDRFRLBLUUDDDRDFFUBURLDLFFFBLLBUDLB",
+      "solution": "F' B2 R2 B' U' R D2 F2 U2 D F' B2 U2 B2 U F2 D F2 U' F2 R2",
+      "moves": 21,
+      "time_ms": 9.207375002006302,
+      "nodes": 469428
+    },
+    {
+      "cube": "FRLUUBFRBLRUDRDLFBRUDDFBRLDFBFLDDUURLBDFLRRUUBFULBLDFB",
+      "solution": "L' U B U2 R2 U' B2 D' F B L D F2 D' B2 U' F2 L2 D2 B2 D",
+      "moves": 21,
+      "time_ms": 8.715250001841923,
+      "nodes": 445920
+    },
+    {
+      "cube": "DFRLUFBFBUDFFRBRUBLLLLFRUBUFUFDDRLLURDDBLUDRLDUBRBDRBF",
+      "solution": "B2 R' F' D L B U' D F' R2 B2 R2 U R2 F2 R2 U D F2 D' L2",
+      "moves": 21,
+      "time_ms": 3.839291999611305,
+      "nodes": 143625
+    },
+    {
+      "cube": "URRLUURRDRBURRDDDDDUBFFBULFBBLFDRBLLFUFBLULDRFFLLBDBFU",
+      "solution": "U2 L' F B2 R' B U' F U' R D F2 U' B2 L2 B2 R2 D L2 U2",
+      "moves": 20,
+      "time_ms": 0.4186670012131799,
+      "nodes": 22365
+    },
+    {
+      "cube": "DLLRULLBULBBURDRUUUUBRFLRBUBDFDDRFURFFFFLBLLDDFRRBDBFD",
+      "solution": "U B2 L' F2 U' L2 U2 R F' B R2 L2 U' B2 D' B2 D L2 D2 B2",
+      "moves": 20,
+      "time_ms": 0.7424579998769332,
+      "nodes": 24549
+    },
+    {
+      "cube": "UDLDUDFLULBFRRUBRDRFBBFDRFUBURBDFDUFRLDBLULRDUFFRBLLLB",
+      "solution": "L' U2 D' B2 R B U' R' D R' B2 D F2 B2 R2 D2 F2 U2 F2 U'",
+      "moves": 20,
+      "time_ms": 2.7161250000062864,
+      "nodes": 120699
+    },
+    {
+      "cube": "BRRBUUBBLURFBRFRFFDDFUFRBDBLRUFDULURULRLLBDLDDFLDBDULF",
+      "solution": "R U2 R F2 R U' B2 R' L F R2 D F2 R2 U F2 L2 U2 R2 D B2",
+      "moves": 21,
+      "time_ms": 10.28424999822164,
+      "nodes": 553941
+    },
+    {
+      "cube": "LBDUUFUBBLUBDRFFBUFLDUFRRDDFFRLDRLLRBBLLLRDDURDURBFBUF",
+      "solution": "U' R B' L' F' U' B' D' R U' F' R2 U B2 U' R2 U2 L2 F2 L2 U2",
+      "moves": 21,
+      "time_ms": 9.909415999572957,
+      "nodes": 516342
+    },
+    {
+      "cube": "UBUBUFLRURURLRUBBRFUFBFFBDDUFLRDDDLDFUDFLLRDLBRLLBRBDF",
+      "solution": "U2 R' B' L U' F R2 B' R' L U L2 D' F2 U2 F2 L2 U D2 F2",
+      "moves": 20,
+      "time_ms": 0.9487909992458299,
+      "nodes": 34932
+    },
+    {
+      "cube": "BDRFUUUBFULBDRLUUDFRRBFFDLBLFLRDRDURLRLLLUBDFUBDBBDFFR",
+      "solution": "U R U2 D F R' D L F' D2 F' U2 L2 D2 F2 R2 U F2 U B2 D2",
+      "moves": 21,
+      "time_ms": 2.2559999997611158,
+      "nodes": 103260
+    },
+    {
+      "cube": "DBLFUURUULBFURRDRRURBFFLLBFDDLLDDRFDFRBULLUDBULRBBFBDF",
+      "solution": "U' D2 R L F R' L D' F' L2 D R2 U L2 F2 U' F2 R2 L2",
+      "moves": 19,
+      "time_ms": 0.19424999845796265,
+      "nodes": 6993
+    },
+    {
+      "cube": "DUBRULLUURDLRRDUBBDFFUFDBBLDDFFDLLRUFBBULLDLRURRFBBRFF",
+      "solution": "U B L F' L2 U F L B2 D' F R2 F2 U F2 U B2 U2 D' R2 L2",
+      "moves": 21,
+      "time_ms": 6.571917001565453,
+      "nodes": 360591
+    },
+    {
+      "cube": "UFBUUBFDRBULBRULBRLFDUFRDFDBRFRDLFDBRLUBLFDDLULFRBDULR",
+      "solution": "U R2 U B' L' F' D' B R2 D B2 R U' B2 D' R2 U2 R2 B2 D2 L2 F2",
+      "moves": 22,
+      "time_ms": 27.083540997409727,
+      "nodes": 1435281
+    },
+    {
+      "cube": "URURULRRBUDFLRUDRRUBLUFFLBBFDRLDUBBFFDBFLBDUDRFLFBDDLL",
+      "solution": "R F D2 F' L B' D' F U2 D' L D F2 U2 B2 U L2 B2 U' F2 D2",
+      "moves": 21,
+      "time_ms": 2.8773749982065056,
+      "nodes": 155670
+    },
+    {
+      "cube": "FRFBUFRFDLRURRUDLRULFFFDBBLDUBUDBBDFUDBRLDLLRLURFBBDLU",
+      "solution": "U2 D' R2 D' F L U D R2 U R' L2 D' F2 L2 F2 D' B2 D' L2 D'",
+      "moves": 21,
+      "time_ms": 5.453249999845866,
+      "nodes": 273396
+    },
+    {
+      "cube": "FRRFUULDURBDDRRDUBUBFBFLDLRBBFLDFBFUDRFFLRLULBULDBLRDU",
+      "solution": "U R2 U2 D F L U B U' F' U' R U' B2 U B2 U F2 R2 L2",
+      "moves": 20,
+      "time_ms": 22.098167002695845,
+      "nodes": 1130283
+    },
+    {
+      "cube": "UFLRUDLUFDFBFRRULBUBLLFLBBFDRRRDBRBULFFULDFURDUBDBLRDD",
+      "solution": "U R L B' L U2 B D2 F B' U' F D R2 D' R2 D2 B2 U L2 U2 F2",
+      "moves": 22,
+      "time_ms": 40.88350000165519,
+      "nodes": 2132490
+    },
+    {
+      "cube": "UULBUFBFFRLBDRRFLFDDDLFBBURUFURDUUBLFRRLLDRDLDRLFBBDUB",
+      "solution": "R' F2 L U2 D2 R2 B R F L' F U R2 U' B2 U2 D F2 R2 D B2",
+      "moves": 21,
+      "time_ms": 21.18979100123397,
+      "nodes": 1125207
+    },
+    {
+      "cube": "UBBLURRFFUBLURUUFLDDRRFLDDRLRBUDRDFBFDFBLUBFFULLBBDDLR",
+      "solution": "U' F U2 L' F2 D R' U' B U' R2 L U R2 D2 R2 B2 L2 B2 U2 L2 U2",
+      "moves": 22,
+      "time_ms": 46.5737500016985,
+      "nodes": 2370759
+    },
+    {
+      "cube": "DLFDUDDBULBUFRFRDFBRBLFRDLFLUDUDRULRRFLULFRBFLBBUBRUDB",
+      "solution": "U2 R' U R F U' F' B R' D B' U2 D' R2 D R2 L2 F2 U2",
+      "moves": 19,
+      "time_ms": 21.26345899887383,
+      "nodes": 1068780
+    },
+    {
+      "cube": "DLLDUFBRFRUFFRUUBFRBDDFDBLBDFLDDUDFRLLULLRLBRUUFRBBURB",
+      "solution": "L D' B' R B L B U2 B D2 L2 D B2 U' F2 D' F2 L2 B2",
+      "moves": 19,
+      "time_ms": 0.12529200103017502,
+      "nodes": 6156
+    },
+    {
+      "cube": "FFRDURDBDBUULRRDBURULLFDUBRLLFDDRDFRLRBBLUFFBFLUFBDBUL",
+      "solution": "U' D' R U D' B2 R B D R' U F' B2 R2 B2 D B2 D' F2 L2 U F2",
+      "moves": 22,
+      "time_ms": 55.55270799959544,
+      "nodes": 2765340
+    },
+    {
+      "cube": "BBFFUDDFBRBULRDFFFFRUBFDDRLBDDUDUULRDLRRLRBBLLLRFBUUUL",
+      "solution": "B2 L' F2 U D' L B R B D L U' F2 R2 U R2 D R2 B2 D L2",
+      "moves": 21,
+      "time_ms": 34.63987500072108,
+      "nodes": 1766790
+    },
+    {
+      "cube": "LFFLUBBBRUDRDRURBDUUBFFRURFFUDUDLBBLFFLDLDRFLURDLBLBRD",
+      "solution": "D' R2 F' U F2 U B' U' D B R F2 L2 B2 U R2 U' B2 U2 R2 U",
+      "moves": 21,
+      "time_ms": 15.232749999995576,
+      "nodes": 767892
+    },
+    {
+      "cube": "RFLLURRBDFUDLRBRUUBDRDFULRUBDFFDBLLLUFDDLLBRUFUBRBFFBD",
+      "solution": "U R2 B' R2 U R' U B R L' U2 B R2 U2 D' L2 F2 L2 D' R2 F2 D'",
+      "moves": 22,
+      "time_ms": 40.013707999605685,
+      "nodes": 2166675
+    }
+  ],
+  "summary": {
+    "baseline_mean_nodes": 702211.22,
+    "hsort_mean_nodes": 627568.62,
+    "baseline_mean_time_ms": 10.842583279882092,
+    "hsort_mean_time_ms": 12.296343300185981,
+    "node_ratio_mean": 2.3321340350385857,
+    "time_ratio_mean": 1.633035379901073,
+    "baseline_mean_moves": 20.78,
+    "hsort_mean_moves": 20.74
+  }
+}

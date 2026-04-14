@@ -33,6 +33,32 @@ ffi.set_source(
         );
         return sol;
     }
+
+    char* solve_hsort(char *cubestring, char *patternstring, char *cache_dir,
+                     int max_depth, long timeout_sec)
+    {
+        char patternized[64];
+        char *sol;
+
+        if (patternstring) {
+            patternize(cubestring, patternstring, patternized);
+            cubestring = patternized;
+        }
+
+        sol = solution_hsort(
+            cubestring,
+            max_depth,
+            timeout_sec,
+            0,
+            cache_dir
+        );
+        return sol;
+    }
+
+    long get_phase1_nodes(void)
+    {
+        return g_phase1_nodes;
+    }
     """,
     include_dirs=['kociemba/ckociemba/include'],
     sources=[
@@ -45,7 +71,11 @@ ffi.set_source(
     extra_compile_args=extra_compile_args
 )
 
-ffi.cdef("char* solve(char *cubestring, char *patternstring, char *cache_dir, int max_depth);")
+ffi.cdef("""
+char* solve(char *cubestring, char *patternstring, char *cache_dir, int max_depth);
+char* solve_hsort(char *cubestring, char *patternstring, char *cache_dir, int max_depth, long timeout_sec);
+long get_phase1_nodes(void);
+""")
 
 if __name__ == "__main__":
     ffi.compile(verbose=True)
