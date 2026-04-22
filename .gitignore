@@ -39,7 +39,14 @@ Thumbs.db
 
 # Project specific
 *.pkl
+# Kociemba pruning tables and neural models — required at runtime / for frozen builds
 !kociemba/kociemba/neural_model.pkl
+!kociemba/kociemba/neural_value_model.pkl
+!kociemba/kociemba/neural_model_coord.pkl
+!kociemba/kociemba/neural_model_scalar.pkl
+!kociemba/kociemba/neural_value_model_coord.pkl
+!kociemba/kociemba/neural_value_model_scalar.pkl
+!kociemba/kociemba/pykociemba/prunetables/*.pkl
 *.pyc
 assets/
 
