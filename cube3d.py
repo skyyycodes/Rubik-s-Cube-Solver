@@ -669,7 +669,7 @@ class RubiksCube3D:
         """Load one of the preset demo scrambles with a known K=1 vs K=5 delta."""
         if index < 0 or index >= len(self.DEMO_SCRAMBLES):
             return
-        cube_string, expected_k1, expected_k5 = self.DEMO_SCRAMBLES[index]
+        cube_string = self.DEMO_SCRAMBLES[index][0]
 
         # Reset centers so the letter_to_color mapping is right.
         self.faces = {
@@ -688,11 +688,7 @@ class RubiksCube3D:
         self.base_cube_string = None
         self.playback_cube_string = None
 
-        self.message = (
-            f"Demo {index+1} loaded. Expected: Kociemba (K=1)={expected_k1} moves, "
-            f"K=5={expected_k5} moves (saves {expected_k1 - expected_k5} moves). "
-            f"Press M to pick mode, Enter to solve."
-        )
+        self.message = "Random scramble applied. Press Enter to solve!"
         self.message_color = 'blue'
 
     def randomize(self):
@@ -1026,8 +1022,7 @@ class RubiksCube3D:
         self.demo_buttons = []
         for i, (dx, dy) in enumerate(demo_positions):
             ax_demo = self.fig.add_axes([dx, dy, 0.048, 0.035])
-            _, k1, k5 = self.DEMO_SCRAMBLES[i]
-            btn_demo = Button(ax_demo, f'Demo {i+1}\n{k1}→{k5}',
+            btn_demo = Button(ax_demo, f'Demo {i+1}',
                               color='#FFF0C8', hovercolor='#FFE090')
             btn_demo.label.set_fontsize(7)
             # Capture i via default arg so the closure binds the correct index.
