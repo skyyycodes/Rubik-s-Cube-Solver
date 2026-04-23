@@ -49,16 +49,16 @@ def solve_cube_compat(cube_string, mode='k5'):
             return kociemba_solve(cube_string, max_phase1_solutions=1)
         elif mode == 'k5':
             return kociemba_solve(cube_string, max_phase1_solutions=5,
-                                 timeout=5000)
+                                 timeout=15000)
         elif mode == 'anytime':
             return kociemba_solve(cube_string, max_phase1_solutions=5,
                                  time_budget_sec=2.0)
         elif mode == 'neural':
             return kociemba_solve(cube_string, max_phase1_solutions=5,
-                                 timeout=5000, neural_strategy='lut')
+                                 timeout=15000, neural_strategy='lut')
         else:
             return kociemba_solve(cube_string, max_phase1_solutions=5,
-                                 timeout=5000)
+                                 timeout=15000)
     except TypeError:
         return kociemba_solve(cube_string)
 
