@@ -655,6 +655,46 @@ class RubiksCube3D:
             self.last_solve_info = None
             return None, str(e)
 
+    # Demo scrambles with known K=1 vs K=5 deltas, reproduced from the
+    # seed-42 benchmark (results/benchmark_200_retrained.json).  Each tuple is
+    # (facelet_string, expected_k1_moves, expected_k5_moves).
+    DEMO_SCRAMBLES = [
+        ('DBRLUDBFBDRFDRLDUUUURUFFRRFFFLLDRBBLBFLLLBUUUDRLBBDFDR', 21, 18),
+        ('FDFDUBUFDBRDBRRRFDLULRFUFUDLLBDDLUBFULBRLFRBURFRUBDLLB', 21, 18),
+        ('DLLDULRUFLUBRRFLDDDBUDFFFRUUBBBDBURFRRFULFRLRDDBLBFLUB', 22, 20),
+        ('DDURUFDFFUUBLRDFUFRDRLFFUBUBRLBDRDDLFFBULULLRLRRLBBDBB', 22, 20),
+    ]
+
+    def load_demo_scramble(self, index: int):
+        """Load one of the preset demo scrambles with a known K=1 vs K=5 delta."""
+        if index < 0 or index >= len(self.DEMO_SCRAMBLES):
+            return
+        cube_string, expected_k1, expected_k5 = self.DEMO_SCRAMBLES[index]
+
+        # Reset centers so the letter_to_color mapping is right.
+        self.faces = {
+            'U': [['white']*3 for _ in range(3)],
+            'D': [['yellow']*3 for _ in range(3)],
+            'F': [['blue']*3 for _ in range(3)],
+            'B': [['green']*3 for _ in range(3)],
+            'R': [['red']*3 for _ in range(3)],
+            'L': [['orange']*3 for _ in range(3)]
+        }
+        self._update_faces_from_cube_string(cube_string)
+
+        # Clear any previous solve state.
+        self.solution_moves = []
+        self.current_move_index = -1
+        self.base_cube_string = None
+        self.playback_cube_string = None
+
+        self.message = (
+            f"Demo {index+1} loaded. Expected: Kociemba (K=1)={expected_k1} moves, "
+            f"K=5={expected_k5} moves (saves {expected_k1 - expected_k5} moves). "
+            f"Press M to pick mode, Enter to solve."
+        )
+        self.message_color = 'blue'
+
     def randomize(self):
         """Generate a valid random cube state by applying random moves to a solved cube."""
         # Reset to solved state first to ensure correct center mapping
@@ -974,6 +1014,25 @@ class RubiksCube3D:
 
         # Color palette (spans bottom)
         self.ax_palette = self.fig.add_subplot(gs[1, :2])
+
+        # Demo scramble buttons (preset hard cubes where K=5 beats K=1).
+        # Two rows of two buttons above the Random Scramble button.
+        demo_positions = [
+            (0.82,  0.135),
+            (0.87,  0.135),
+            (0.82,  0.095),
+            (0.87,  0.095),
+        ]
+        self.demo_buttons = []
+        for i, (dx, dy) in enumerate(demo_positions):
+            ax_demo = self.fig.add_axes([dx, dy, 0.048, 0.035])
+            _, k1, k5 = self.DEMO_SCRAMBLES[i]
+            btn_demo = Button(ax_demo, f'Demo {i+1}\n{k1}→{k5}',
+                              color='#FFF0C8', hovercolor='#FFE090')
+            btn_demo.label.set_fontsize(7)
+            # Capture i via default arg so the closure binds the correct index.
+            btn_demo.on_clicked(lambda event, idx=i: (self.load_demo_scramble(idx), self.draw_all()))
+            self.demo_buttons.append(btn_demo)
 
         # Add small random scramble button at the bottom-right
         ax_btn_random = self.fig.add_axes([0.82, 0.05, 0.1, 0.04])
