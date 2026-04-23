@@ -16,6 +16,11 @@ Controls:
 """
 
 import numpy as np
+import matplotlib
+
+# Force an interactive backend for the standalone GUI. Frozen builds can
+# otherwise fall back to non-interactive Agg and exit without showing a window.
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection

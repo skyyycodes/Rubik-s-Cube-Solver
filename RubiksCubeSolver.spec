@@ -36,6 +36,7 @@ hiddenimports = [
     'kociemba.neural_heuristic',
     'cffi',
     '_cffi_backend',
+    'PIL.ImageTk',
 ]
 
 a = Analysis(
@@ -47,7 +48,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['cv2', 'streamlit', 'torch', 'tensorflow', 'PIL.ImageTk'],
+    excludes=['cv2', 'streamlit', 'torch', 'tensorflow'],
     noarchive=False,
     optimize=0,
 )
