@@ -15,6 +15,9 @@ Controls:
 - Q: Quit
 """
 
+import threading
+import time
+
 import numpy as np
 import matplotlib
 
@@ -165,6 +168,21 @@ class RubiksCube3D:
         self.base_cube_string = None
         self.playback_cube_string = None
         self.last_solve_info = None
+
+        # Async solve / progress-bar state
+        self.solve_in_progress = False
+        self.solve_result = None        # ('ok', solution, elapsed_ms) or ('err', msg, 0)
+        self.solve_thread = None
+        self.progress_timer = None
+        self.progress_position = 0
+        self.solve_start_time = 0.0
+        self._pending_cube_string = None
+        self.ax_progress = None
+        self.progress_track = None
+        self.progress_marquee = None
+        self.progress_text = None
+        self._progress_bg = None
+        self._original_switch_interval = None
 
     def _physical_faces(self):
         """
@@ -962,7 +980,17 @@ class RubiksCube3D:
             print(f"Solver mode changed to: {label}")
 
         elif event.key == 'enter':
-            mode_label = self.solve_mode_labels[self.solve_modes[self.solve_mode_index]]
+            if self.solve_in_progress:
+                # A solve is already running — let the timer drive the UI.
+                return
+
+            mode = self.solve_modes[self.solve_mode_index]
+            if mode != 'baseline':
+                # Slow modes: run on a background thread with a progress bar.
+                self._start_async_solve()
+                return
+
+            mode_label = self.solve_mode_labels[mode]
             self.message = f"Solving with {mode_label}..."
             self.message_color = 'orange'
             self.draw_all()  # show "Solving..." before blocking call
@@ -986,6 +1014,201 @@ class RubiksCube3D:
                 else:
                     self.message = "Cube is already solved!"
                     self.message_color = 'green'
+
+        self.draw_all()
+
+    def _start_async_solve(self):
+        """Run the solver on a background thread with an animated progress bar."""
+        cube_string = self.to_kociemba_string()
+
+        counts = {c: cube_string.count(c) for c in 'URFDLB'}
+        if any(v != 9 for v in counts.values()):
+            bad_colors = [c for c, v in counts.items() if v != 9]
+            self.message = (
+                "Color count error: "
+                + ", ".join(f"{c}={counts[c]}" for c in bad_colors)
+            )
+            self.message_color = 'red'
+            self.draw_all()
+            return
+
+        mode = self.solve_modes[self.solve_mode_index]
+        mode_label = self.solve_mode_labels[mode]
+
+        self.solve_in_progress = True
+        self.solve_result = None
+        self.solve_start_time = time.time()
+        self.progress_position = 0
+        self._pending_cube_string = cube_string
+
+        # Build the matplotlib state for the entire UI plus an initial bar
+        # frame, then force a synchronous render BEFORE the solver thread
+        # starts so the bar is already on screen when the GIL contention kicks
+        # in.
+        self.message = f"Solving with {mode_label}..."
+        self.message_color = 'orange'
+        self.draw_all()
+        self._update_progress_bar()
+
+        # Capture the static background of the progress-bar axes (track only,
+        # without the marquee/text) so each tick can do a tiny blit instead of
+        # redrawing the whole figure.
+        self.progress_marquee.set_visible(False)
+        self.progress_text.set_visible(False)
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        try:
+            self._progress_bg = self.fig.canvas.copy_from_bbox(self.ax_progress.bbox)
+        except Exception:
+            self._progress_bg = None
+        self.progress_marquee.set_visible(True)
+        self.progress_text.set_visible(True)
+        if self._progress_bg is not None:
+            self.fig.canvas.restore_region(self._progress_bg)
+            self.ax_progress.draw_artist(self.progress_marquee)
+            self.ax_progress.draw_artist(self.progress_text)
+            self.fig.canvas.blit(self.ax_progress.bbox)
+            self.fig.canvas.flush_events()
+        else:
+            self.fig.canvas.draw_idle()
+            self.fig.canvas.flush_events()
+
+        # Make Python's thread switch much more frequent than the default 5 ms
+        # so the matplotlib Tk timer can actually fire while the pure-Python
+        # solver thread is hammering the GIL.
+        self._original_switch_interval = _sys.getswitchinterval()
+        _sys.setswitchinterval(0.001)
+
+        def worker():
+            try:
+                t0 = time.time()
+                solution = solve_cube_compat(cube_string, mode=mode)
+                elapsed_ms = (time.time() - t0) * 1000
+                self.solve_result = ('ok', solution, elapsed_ms)
+            except Exception as e:
+                self.solve_result = ('err', str(e), 0)
+
+        self.solve_thread = threading.Thread(target=worker, daemon=True)
+        self.solve_thread.start()
+
+        if self.progress_timer is None:
+            self.progress_timer = self.fig.canvas.new_timer(interval=50)
+            self.progress_timer.add_callback(self._on_progress_tick)
+        self.progress_timer.start()
+
+    def _on_progress_tick(self):
+        """Timer callback: advance the marquee or finalize when the thread completes."""
+        if not self.solve_in_progress:
+            if self.progress_timer is not None:
+                self.progress_timer.stop()
+            return
+
+        if self.solve_result is not None:
+            if self.progress_timer is not None:
+                self.progress_timer.stop()
+            self._finalize_solve_result()
+            return
+
+        self.progress_position += 2
+        self._update_progress_bar()
+
+        # Cheap partial repaint: restore the static background of the bar
+        # axes, redraw only the marquee + elapsed-time text, blit just that
+        # region. This stays fast even while the solver is busy.
+        if self._progress_bg is not None:
+            self.fig.canvas.restore_region(self._progress_bg)
+            self.ax_progress.draw_artist(self.progress_marquee)
+            self.ax_progress.draw_artist(self.progress_text)
+            self.fig.canvas.blit(self.ax_progress.bbox)
+        else:
+            self.fig.canvas.draw_idle()
+        self.fig.canvas.flush_events()
+
+    def _update_progress_bar(self):
+        """Advance the marquee bar and refresh the elapsed-time label."""
+        if self.ax_progress is None:
+            return
+
+        if not self.solve_in_progress:
+            self.ax_progress.set_visible(False)
+            return
+
+        self.ax_progress.set_visible(True)
+        track_width = 100
+        bar_width = 25
+        span = (track_width - bar_width) * 2
+        pos = self.progress_position % span
+        x = pos if pos <= track_width - bar_width else span - pos
+        self.progress_marquee.set_x(x)
+
+        elapsed = time.time() - self.solve_start_time
+        mode_label = self.solve_mode_labels[self.solve_modes[self.solve_mode_index]]
+        self.progress_text.set_text(
+            f'Solving... [{mode_label}]   {elapsed:0.1f}s'
+        )
+
+    def _finalize_solve_result(self):
+        """Apply the worker thread's result to the UI state."""
+        # Restore the default Python thread switch interval.
+        if self._original_switch_interval is not None:
+            try:
+                _sys.setswitchinterval(self._original_switch_interval)
+            except Exception:
+                pass
+            self._original_switch_interval = None
+
+        self._progress_bg = None
+
+        result = self.solve_result
+        self.solve_result = None
+        self.solve_in_progress = False
+        if self.ax_progress is not None:
+            self.ax_progress.set_visible(False)
+
+        if not result:
+            self.draw_all()
+            return
+
+        status = result[0]
+        if status == 'err':
+            self.solution_moves = []
+            self.current_move_index = -1
+            self.base_cube_string = None
+            self.playback_cube_string = None
+            self.last_solve_info = None
+            self.message = f"Error: {result[1]}"
+            self.message_color = 'red'
+            print(f"Error: {result[1]}")
+        else:
+            solution = result[1]
+            elapsed_ms = result[2]
+            cube_string = self._pending_cube_string
+            mode_label = self.solve_mode_labels[self.solve_modes[self.solve_mode_index]]
+
+            self.solution_moves = solution.split() if solution else []
+            self.current_move_index = -1
+            self.base_cube_string = cube_string
+            self.playback_cube_string = cube_string
+            self.last_solve_info = {
+                'mode': mode_label,
+                'moves': len(self.solution_moves),
+                'time_ms': elapsed_ms,
+                'solution': solution,
+            }
+
+            if solution:
+                info = self.last_solve_info
+                self.message = (
+                    f"[{info['mode']}] {info['moves']} moves in {info['time_ms']:.0f} ms. "
+                    f"Press 'N' for step-by-step."
+                )
+                self.message_color = 'green'
+                print(f"\nSOLUTION FOUND! [{info['mode']}]")
+                print(f"Moves: {solution}")
+                print(f"Total moves: {info['moves']} | Time: {info['time_ms']:.1f} ms")
+            else:
+                self.message = "Cube is already solved!"
+                self.message_color = 'green'
 
         self.draw_all()
 
@@ -1036,6 +1259,28 @@ class RubiksCube3D:
         ax_btn_random.text(0.5, 0.5, '', fontsize=8, ha='center', va='center')
         self.btn_random.label.set_fontsize(8)
         self.btn_random.on_clicked(lambda event: (self.randomize(), self.draw_all()))
+
+        # Progress bar (hidden until an async solve starts)
+        self.ax_progress = self.fig.add_axes([0.1, 0.945, 0.55, 0.03])
+        self.ax_progress.set_xlim(0, 100)
+        self.ax_progress.set_ylim(0, 1)
+        self.ax_progress.axis('off')
+        self.ax_progress.set_visible(False)
+        self.progress_track = mpatches.Rectangle(
+            (0, 0), 100, 1,
+            facecolor='#E8E8E8', edgecolor='#808080', linewidth=1,
+        )
+        self.ax_progress.add_patch(self.progress_track)
+        self.progress_marquee = mpatches.Rectangle(
+            (0, 0), 25, 1,
+            facecolor='#FF8800', edgecolor='none',
+        )
+        self.ax_progress.add_patch(self.progress_marquee)
+        self.progress_text = self.ax_progress.text(
+            50, 0.5, '',
+            ha='center', va='center',
+            fontsize=9, fontweight='bold', color='white',
+        )
 
         # Connect events
         self.fig.canvas.mpl_connect('key_press_event', self.on_key)

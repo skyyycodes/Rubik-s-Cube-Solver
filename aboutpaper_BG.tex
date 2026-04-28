@@ -1,0 +1,763 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{framed}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black,
+  pdftitle={Beginner Guide to the Rubik's Cube Solver Paper},
+  pdfauthor={Akash Chakraborty and Atal Chaudhuri},
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Beginner Guide --- Rubik's Cube Solver Paper}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\defn}[1]{\textbf{#1}}
+\newcommand{\qbox}[1]{\begin{quote}\small\textit{#1}\end{quote}}
+
+\title{\vspace{-1.5em}\LARGE Beginner Guide For Presenting The Paper\\[0.3em]
+\large \emph{Multi-Solution Search and the Limits of Neural Guidance\\ in Rubik's Cube Solving}}
+\author{\normalsize Akash Chakraborty \and Atal Chaudhuri\\[0.3em]
+\small Sister Nivedita University, Kolkata}
+\date{\today}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{framed}
+\noindent\small\textbf{How to use this guide.} Read it straight through once
+without trying to memorise anything. Every term in \defn{bold} is
+explained the first time it appears. On second reading, focus on
+Sections~\ref{sec:summary}--\ref{sec:viva}: those contain the memorisable
+lines and the viva answers. You do not need the paper in front of you to
+follow this guide; every number quoted here is cross-referenced to the
+paper's frozen result artifacts.
+\end{framed}
+
+\tableofcontents
+\bigskip
+
+%============================================================================
+\section{What is this paper about?}
+%============================================================================
+
+This paper is about making a Rubik's Cube solving program better.
+
+The authors start with an existing, very well-known solver called
+\defn{Kociemba's Two-Phase Algorithm}, and then add three extensions:
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{Multi-solution search.} Try several possible halfway
+        states instead of only the first one, and keep the shortest full
+        solution.
+  \item \textbf{Anytime mode.} Stop early if the caller only has a
+        limited time budget (useful for interactive apps).
+  \item \textbf{Neural move ordering.} Use a small AI model to guess
+        which move should be tried first during search.
+\end{enumerate}
+
+The \textbf{biggest success is the first one}. The anytime mode is a
+simple engineering knob. The AI idea is interesting and carefully
+studied, but the paper's own finding is that it does \textbf{not} help
+the final solver much. That negative result is itself a main
+contribution of the paper.
+
+%============================================================================
+\section{What is a solver?}
+%============================================================================
+
+A \defn{solver} is a program that takes a scrambled Rubik's Cube and
+returns a sequence of moves that solves it.
+
+\qbox{Input: a scrambled cube. \quad Output: e.g.\ \texttt{R U R' U'}.}
+
+That output means: turn the Right face clockwise, then the Up face
+clockwise, then the Right face counter-clockwise, then the Up face
+counter-clockwise. A cube has 18 possible moves at every step (six faces
+$\times$ three turn types), so the space of possible sequences is
+astronomically large.
+
+%============================================================================
+\section{How big is the space?}
+%============================================================================
+
+A 3$\times$3 Rubik's Cube has about $4.3 \times 10^{19}$ reachable
+states. That is 43 billion billion. You cannot brute-force search that;
+you need a smart algorithm.
+
+%============================================================================
+\section{What is Kociemba's Two-Phase Algorithm?}
+%============================================================================
+
+This is the classical algorithm the paper builds on. It solves the cube
+in \textbf{two steps} rather than in one shot.
+
+\paragraph{Phase 1.} The solver does not fully solve the cube. It only
+brings the cube into a special \emph{halfway group} called $G_1$. You
+can think of $G_1$ as the set of cube states where all edges are
+correctly oriented, all corners are correctly oriented, and the
+middle-layer edges are in the middle layer. The cube is still
+scrambled, but in a more structured way.
+
+\paragraph{Phase 2.} From that halfway state, the solver finishes the
+cube, but now using only 10 of the 18 moves (the other 8 would break
+the structure Phase~1 just established). The reduced set of moves means
+the search is much easier.
+
+\paragraph{Why do this in two phases?} Because each phase has a much
+smaller effective search space than solving in one shot. Phase 2 in
+particular becomes very fast.
+
+%============================================================================
+\section{What is IDA*?}
+%============================================================================
+
+Both phases use a search algorithm called \defn{IDA*} (Iterative
+Deepening A*). Intuitively:
+
+\begin{itemize}[leftmargin=2em]
+  \item The solver tries to find a solution at depth 1. If none, depth 2.
+        If none, depth 3, and so on.
+  \item At each depth limit, it does a depth-first search, using a
+        \textbf{heuristic} (see Section~\ref{sec:heuristic}) to prune
+        branches that cannot possibly succeed.
+\end{itemize}
+
+You do not need the formal definition for the presentation. Just remember:
+
+\qbox{IDA* is the tree-search procedure inside Kociemba's two phases. It
+expands nodes one depth at a time, guided by a lower-bound heuristic.}
+
+%============================================================================
+\section{What is a search tree, and what is a ``node''?}
+%============================================================================
+
+Imagine a tree where:
+
+\begin{itemize}[leftmargin=2em]
+  \item the root is the scrambled cube,
+  \item each child is what the cube looks like after one move,
+  \item grandchildren are what it looks like after two moves, and so on.
+\end{itemize}
+
+Each point in that tree is a \defn{node}. When the paper says
+``expanded 6.79M nodes'', it means the solver inspected about 6.79
+million cube positions on its way to finding a solution.
+
+\qbox{More nodes = more work = more time. Fewer nodes is better.}
+
+%============================================================================
+\section{What is a heuristic?}
+\label{sec:heuristic}
+%============================================================================
+
+A \defn{heuristic} is a fast guess about how far a cube state is from
+being solved. In Kociemba, this guess is a \emph{lower bound}: it never
+overestimates. IDA* uses it to throw away branches that cannot finish in
+the current depth limit.
+
+%============================================================================
+\section{What is a pruning table?}
+%============================================================================
+
+A \defn{pruning table} is a giant precomputed lookup table that stores
+the minimum number of moves needed from each compact cube coordinate
+down to the solved state (or to the halfway $G_1$ state in Phase~1).
+Kociemba uses a few of these tables, totalling about 20~MB, built once
+and saved to disk.
+
+At every node during search, the solver just reads a few numbers from
+these tables. No actual calculation. That is what makes Kociemba so
+fast: the hard work was done once, offline.
+
+%============================================================================
+\section{What does ``pruning'' mean?}
+%============================================================================
+
+\defn{Pruning} means cutting away useless branches of the search tree
+early, before exploring them. If the pruning table says ``this branch
+cannot reach the goal within the current depth limit'', the solver
+skips it.
+
+%============================================================================
+\section{What is move ordering?}
+%============================================================================
+
+At any given node, the solver has up to 18 legal moves it can try next.
+\defn{Move ordering} is the decision of \emph{which order} to try those
+moves in. If the first move you try is the right move, you find the
+solution quickly. If you always try the wrong ones first, you waste
+time. Kociemba's default ordering is a fixed lexicographic order
+($U, U', U_2, R, R', \ldots$).
+
+The neural part of this paper is an attempt to replace that fixed order
+with a learned order.
+
+%============================================================================
+\section{What is the paper's main algorithmic idea?}
+%============================================================================
+
+Normal Kociemba:
+
+\begin{itemize}[leftmargin=2em]
+  \item Finds the first Phase~1 endpoint.
+  \item Runs Phase~2 from there.
+  \item Returns the combined sequence.
+\end{itemize}
+
+This paper:
+
+\begin{itemize}[leftmargin=2em]
+  \item Finds up to $K$ different Phase~1 endpoints.
+  \item Runs Phase~2 from each.
+  \item Returns the shortest combined solution.
+\end{itemize}
+
+That is it. Nothing clever, nothing fancy. And it works surprisingly
+well in practice.
+
+%============================================================================
+\section{Why does that help?}
+%============================================================================
+
+Two different Phase~1 endpoints are both ``valid halfway points'', but
+one of them might sit much closer to the solved cube than the other.
+The default Kociemba always accepts the first endpoint it finds, even
+if a slightly later one would have led to a shorter Phase~2. Trying $K$
+endpoints and keeping the best is like taking the \emph{minimum of $K$
+draws} from the Phase~2-length distribution.
+
+If you remember one intuition, remember this:
+
+\qbox{``Don't stop at the first halfway state you find; try a few and
+pick the one that leads to the shortest finish.''}
+
+%============================================================================
+\section{What does ``K=5'' mean?}
+%============================================================================
+
+$K$ is just the number of Phase~1 endpoints the solver will try.
+
+\begin{itemize}[leftmargin=2em]
+  \item $K=1$ is the original Kociemba behaviour (one endpoint).
+  \item $K=3$ is a middle setting: tries three endpoints.
+  \item $K=5$ is the paper's default recommended setting.
+  \item $K=10$ is more exhaustive but runs into diminishing returns.
+\end{itemize}
+
+Bigger $K$ usually means better solution quality but more computation
+time. The paper's data shows that the gain saturates around $K=3$ to
+$K=5$.
+
+%============================================================================
+\section{What is the headline result?}
+\label{sec:headline}
+%============================================================================
+
+On the canonical 200-cube, seed-42 benchmark, all reported numbers come
+from the frozen file
+\texttt{results/benchmark\_200\_retrained.json}:
+
+\begin{center}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Setting} & \textbf{Mean moves} & \textbf{$\leq$20 (\%)} &
+\textbf{Total nodes} & \textbf{Mean time} \\
+\midrule
+Baseline ($K=1$) & 20.77 & 28.0\% & 788\,K   & 582\,ms  \\
+Multi ($K=5$)    & 20.23 & 57.5\% & 6.79\,M  & 5103\,ms \\
+$K=5$ + LUT      & 20.27 & 54.8\% & 6.02\,M  & 5009\,ms \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+So multi-solution search:
+
+\begin{itemize}[leftmargin=2em]
+  \item Reduces mean solution length by $0.53$ moves
+        ($20.77 \to 20.23$).
+  \item Roughly \textbf{doubles} the fraction of $\leq$20-move
+        solutions ($28.0\% \to 57.5\%$).
+  \item Costs about $8.6\times$ more expanded nodes ($788\,\text{K} \to
+        6.79\,\text{M}$).
+\end{itemize}
+
+That is the paper's strongest, cleanest result.
+
+%============================================================================
+\section{What does ``$\leq$20 moves'' mean, and why is it important?}
+%============================================================================
+
+$\leq$20 just means ``20 moves or fewer''. This cut-off matters because
+of \defn{God's Number}. See the next section.
+
+%============================================================================
+\section{What is God's Number?}
+%============================================================================
+
+God's Number is the fewest moves needed to solve \emph{any} Rubik's
+Cube position if you use the best possible solver. For the 3$\times$3
+cube, God's Number is \textbf{20} (proved in 2010 by Rokicki, Kociemba,
+Davidson and Dethridge).
+
+So ``$\leq$20-move solutions'' is the paper's way of asking \emph{how
+often does the solver hit the theoretically optimal range?} Baseline
+Kociemba does it 28\% of the time; with multi-solution search that
+jumps to 57.5\%. Note that the paper does \emph{not} prove its solver
+is always optimal --- it just lands in the optimal range much more
+often.
+
+%============================================================================
+\section{What is the anytime mode?}
+%============================================================================
+
+\defn{Anytime mode} is a softer version of multi-solution search.
+Instead of a hard timeout, the caller gives a \emph{budget} (for
+example, 0.5 seconds). The solver keeps finding better and better
+solutions within that budget and returns the best one at the deadline.
+If no solution has been found at all, you get a timeout error.
+
+This mode matters for interactive apps --- you cannot tell a user
+``please wait 25 seconds''. The paper's anytime table
+(\texttt{results/\allowbreak anytime\_sweep.json}) shows that at a
+0.5-second budget the solver completes about 66\% of cubes with a mean
+of 20.42 moves.
+
+%============================================================================
+\section{What is the neural part trying to do?}
+%============================================================================
+
+The neural part is \emph{not} a solver. It is a small AI model (about
+84\,K parameters) whose only job is to rank the 18 possible moves at a
+node, so the solver can try the highest-ranked move first. The rest of
+the solver is unchanged: pruning tables, IDA*, Phase~1/Phase~2,
+everything.
+
+The paper is very careful about why it does not use the neural network
+as a \emph{heuristic} (i.e.\ as a replacement lower bound). Doing that
+would break Kociemba's admissibility guarantee and make the search
+dramatically slower on some cubes. Using the neural output only for
+move ordering keeps the solver correct.
+
+%============================================================================
+\section{What does ``accuracy'' mean here?}
+%============================================================================
+
+Accuracy means: ``on a held-out test set, how often does the model's
+top-ranked move match the label we trained it to predict?'' The paper
+reports three regimes:
+
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Setup} & \textbf{Top-1} & \textbf{Top-3} \\
+\midrule
+9 scalar features (50\,K cubes)           & 5.9\%   & ---     \\
+161 binned features (100\,K cubes, proxy) & 10.8--13.4\% & 24.9--28.1\% \\
+161 binned features (2\,M cubes, pruning-greedy) & \textbf{43.94\%} & \textbf{64.48\%} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Random would be $1/18 \approx 5.56\%$. So scalar features are at chance.
+Rich binned features with pruning-greedy labels jump to nearly
+44\%.
+
+\textbf{The paper's key surprise}: that big jump in accuracy does
+\emph{not} translate into a big end-to-end search improvement.
+
+%============================================================================
+\section{What are top-1 and top-3 accuracy?}
+%============================================================================
+
+\begin{itemize}[leftmargin=2em]
+  \item \defn{Top-1}: the model's first guess is correct.
+  \item \defn{Top-3}: the correct answer is in the model's best three
+        guesses.
+\end{itemize}
+
+A model can be low in top-1 but decent in top-3, which still helps
+if the search tries the top few moves first before falling back to the
+rest.
+
+%============================================================================
+\section{What is a LUT and why did the authors build one?}
+%============================================================================
+
+\defn{LUT} means \textbf{Look-Up Table}. Running the neural network
+every time the solver visits a node is expensive ($\sim$16 microseconds
+per query on the paper's laptop). That cost, multiplied by millions of
+nodes per solve, eats any gain from better move ordering.
+
+The LUT is a clever shortcut: \emph{offline}, the authors run the
+neural network once for every one of the 32\,768 possible coordinate
+bins and store the resulting move rankings in a single 576\,KB file.
+\emph{Online}, each node just does a 1.5-microsecond array lookup ---
+no neural net, no matrix multiplication. This is a simple form of
+\textbf{knowledge distillation}.
+
+\qbox{Neural forward pass: $\sim$16\,$\mu$s. \quad LUT lookup:
+$\sim$1.5\,$\mu$s.}
+
+%============================================================================
+\section{Did the LUT fix the problem?}
+%============================================================================
+
+Partly. It killed the per-node inference cost completely. But the
+end-to-end node reduction over plain $K=5$ was only $\approx 1.13\times$
+(6.79\,M $\to$ 6.02\,M nodes), and the LUT variant actually solved one
+fewer cube within the 5-second timeout (199/200 vs.\ 200/200).
+
+So the lesson is:
+
+\qbox{Inference cost was part of the problem, but the bigger problem is
+that Kociemba's pruning tables already order moves nearly as well as
+any admissibility-preserving heuristic can. There is very little room
+left to improve.}
+
+%============================================================================
+\section{What is the ``negative result''?}
+%============================================================================
+
+A \defn{negative result} is an experiment whose outcome was not the
+improvement you hoped for --- but reporting it honestly is still
+valuable, because it tells the community what \emph{not} to try.
+
+Here the negative result is:
+
+\begin{itemize}[leftmargin=2em]
+  \item A 7$\times$ jump in prediction accuracy (5.9\% $\to$ 43.9\%)
+        delivered only a 1.13$\times$ node reduction.
+  \item A bigger model (MLP-4 Wide, 257\,K parameters instead of 84\,K)
+        gained only $+2.6$ percentage points of accuracy at $+37\%$
+        inference cost.
+  \item A carefully retrained $\Delta h$ predictor (v1 and v2) ends up
+        exactly matching the class prior --- the model learned
+        \emph{nothing useful beyond the marginal distribution}.
+\end{itemize}
+
+All three are honest signals that lightweight neural move ordering does
+not pay off against Kociemba's pruning tables in this regime.
+
+%============================================================================
+\section{What is the ``headroom'' measurement?}
+%============================================================================
+
+To prove that this is not just ``the cube is already optimally solved'',
+the authors directly measured how much better an \emph{oracle} move
+ordering could be. On 6\,000 randomly walked Phase~1 states
+(\texttt{results/\allowbreak headroom\_\allowbreak measurement.json}):
+
+\begin{itemize}[leftmargin=2em]
+  \item Kociemba's default lexicographic first-move is \emph{progressing
+        toward the goal} only $p_{\text{lex}} = 19.6\%$ of the time.
+  \item The minimum-$h$ child (the oracle) is progressing
+        $p_{\text{top}} = 65.2\%$ of the time.
+  \item That is a gap of 0.456 --- a theoretical ceiling of roughly
+        $10\times$ node reduction if a solver could actually use the
+        oracle.
+\end{itemize}
+
+So the room to improve exists. It is just not reachable by a small MLP
+on 161 binned features.
+
+%============================================================================
+\section{Why does the small MLP fail to close that gap?}
+%============================================================================
+
+Two independent retraining experiments are reported:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{v1:} 150\,K walk-sampled states, 161-dim features,
+        three-way $\Delta h$ cross-entropy. The model's progressing
+        rate is $20.2\%$, indistinguishable from the
+        $19.8\%$ baseline.
+  \item \textbf{v2:} 3\,M states (20$\times$ more), per-coordinate
+        embedding tables ($\sim$11$\times$ more parameters), same
+        training objective. Rate is $20.2\%$ again. No movement.
+\end{itemize}
+
+Both converge \emph{to the marginal class prior}, meaning the model
+learns how common each outcome is overall but nothing about
+move-conditional structure. The paper calls this a
+\defn{feature-resolution ceiling}: 161 binned features are rich enough
+for state-level quantities like $h$, but too lossy to recover the
+permutation action of the move tables.
+
+%============================================================================
+\section{What is the \texttt{h\_sort} experiment?}
+%============================================================================
+
+To separate ``the oracle is unreachable'' from ``the headroom is fake'',
+the authors also implemented an \emph{oracle} move ordering: for every
+legal child, call the pruning tables and sort by $h$ ascending. Results
+(\texttt{results/\allowbreak h\_sort\_benchmark.json},
+\texttt{hsort\_\allowbreak c\_backend.json}):
+
+\begin{itemize}[leftmargin=2em]
+  \item Python $K=5$: $1.66\times$ node reduction over default ---
+        real, but does not become a wall-clock win because the 36
+        extra pruning-table lookups per node cost more than the nodes
+        saved.
+  \item C backend $K=1$: $11\%$ node reduction but $13\%$ slower
+        wall-clock.
+\end{itemize}
+
+So the headroom is real, but not monetisable into faster solves
+--- and certainly not by a small neural model.
+
+%============================================================================
+\section{What is a ``hard case'', and how does the paper handle it?}
+%============================================================================
+
+\defn{Hard cases} are deliberately difficult scrambles --- the paper
+uses 49 depth-20 scrambles and the superflip. The benchmark
+(\texttt{results/\allowbreak hard\_cases.json}) shows that on these
+hard cubes the $K=5$ improvement is even bigger: $\leq$20-move rate
+goes from $45\%$ (baseline) to $71\%$ ($K=5$), at $71\times$ more wall
+time. Multi-solution search scales the right way --- it helps more
+where it is needed most.
+
+%============================================================================
+\section{Multi-seed validation --- is the improvement real?}
+%============================================================================
+
+A classic concern with a single benchmark is: ``maybe seed 42 is
+lucky.'' The paper runs the same comparison on four different seeds
+(42, 123, 456, 789) with 200 cubes each. Every single seed shows
+$K=5$ beating baseline. Pooled across all 800 cube pairs:
+
+\begin{itemize}[leftmargin=2em]
+  \item Mean improvement: $\Delta = 0.40 \pm 0.09$ moves.
+  \item Cohen's $d = 0.59$ (a medium-to-large effect).
+  \item 95\% confidence interval: $[0.35, 0.45]$ moves.
+  \item $p < 0.001$.
+\end{itemize}
+
+Robust, not a fluke.
+
+%============================================================================
+\section{What about the statistical terms?}
+%============================================================================
+
+\paragraph{Mean vs.\ median.} Mean is the arithmetic average; median is
+the middle value. On timing data, a few very slow runs can pull the
+mean up without affecting the median. The paper reports both for
+timings and just the mean for move counts.
+
+\paragraph{$p$-value.} A small $p$-value means ``the difference we saw
+is very unlikely to be pure chance''. For $K=1$ vs.\ $K=5$, $p <
+10^{-20}$ --- well beyond any reasonable bar.
+
+\paragraph{Effect size ($d_z$, $d$).} Separate question: \emph{how big}
+is the difference, measured in standard-deviation units? $d_z = 0.79$
+is a large within-subject effect. $d = 0.59$ pooled across seeds is a
+medium-to-large between-subject effect.
+
+\paragraph{Confidence interval.} A plausible range for the true mean
+improvement. $[0.44, 0.62]$ moves on seed~42 tells you the real
+improvement is almost certainly between half a move and a bit over half
+a move --- always positive.
+
+%============================================================================
+\section{What is the difference between the C backend and the Python backend?}
+%============================================================================
+
+The solver ships in two implementations:
+
+\begin{itemize}[leftmargin=2em]
+  \item A fast C implementation (used when $K=1$ with no neural or
+        anytime): $\sim$10\,ms per solve.
+  \item A pure-Python implementation that supports all the enhanced
+        features ($K>1$, anytime, neural, h\_sort): $\sim$59$\times$
+        slower.
+\end{itemize}
+
+For research results, everything is measured on the Python backend so
+the node counts are reproducible. For end-user wall-clock, the C
+backend is used in baseline mode and makes $K=1$ essentially
+instantaneous in the desktop app.
+
+%============================================================================
+\section{How does this compare to DeepCubeA?}
+%============================================================================
+
+\defn{DeepCubeA} is a large deep-reinforcement-learning cube solver
+($\sim$500\,K parameters, $\sim$2 GPU-days to train, $\sim$10 seconds per
+solve, near-optimal solutions in 60\% of cases). It uses weighted A*
+with a learned value network.
+
+This paper is positioned as a complement, not a rival:
+
+\begin{itemize}[leftmargin=2em]
+  \item Tiny model (84\,K parameters, not 500\,K).
+  \item Minutes of CPU training, not days of GPU.
+  \item Runs on a laptop, not a workstation.
+  \item Used as an \emph{add-on} to a classical solver, not a
+        replacement.
+\end{itemize}
+
+The headline takeaway --- that lightweight neural guidance does not
+add much on top of strong pruning tables --- is a genuinely new
+observation, because previous deep-cube work (including DeepCubeA)
+replaces the classical solver rather than sitting on top of it.
+
+%============================================================================
+\section{What does the paper ultimately conclude?}
+%============================================================================
+
+Four bullet points, all directly supported by the frozen artifacts:
+
+\begin{enumerate}[leftmargin=2em]
+  \item Multi-solution Phase~1 search is a simple, zero-training
+        improvement that produces shorter solutions more often.
+  \item Representation and label quality drive move-prediction
+        accuracy; architecture does not.
+  \item LUT distillation makes per-node neural inference effectively
+        free --- an engineering win that cleanly separates ``prediction
+        cost'' from ``search-space cost''.
+  \item Even so, learned move ordering plateaus when the classical
+        heuristic is already strong. Predict accuracy is not a
+        sufficient measure of usefulness inside search.
+\end{enumerate}
+
+The authors' recommended default for practitioners is $K=3$: the best
+balance of solution quality and compute cost.
+
+%============================================================================
+\section{The simplest possible summary you can say in class}
+\label{sec:summary}
+%============================================================================
+
+\begin{quote}
+``This paper improves a Rubik's Cube solver by trying several possible
+halfway states instead of only the first one. That simple change gives
+shorter solutions much more often --- from 28\% optimal to nearly 58\%.
+The paper also tests a small neural network to guide the search. Even
+though prediction accuracy improves a lot, the final solver improves
+only a little, because Kociemba's pruning tables are already very
+strong. So the main lesson is that a simple search improvement works
+better than lightweight AI guidance in this setting --- and that is a
+useful, honestly reported negative result in its own right.''
+\end{quote}
+
+%============================================================================
+\section{Five lines to memorise}
+%============================================================================
+
+\begin{enumerate}[leftmargin=2em]
+  \item The paper extends Kociemba's Two-Phase Rubik's Cube solver.
+  \item The main algorithmic idea is to try $K > 1$ Phase~1 endpoints and
+        keep the shortest combined solution.
+  \item At $K=5$ the mean solution length drops from $20.77$ to
+        $20.23$ moves ($p < 10^{-20}$, Cohen's $d_z = 0.79$).
+  \item The fraction of $\leq$20-move solutions roughly doubles, from
+        28.0\% to 57.5\%.
+  \item A neural move predictor lifts raw accuracy from 5.9\% to
+        43.9\%, but the end-to-end node reduction is only $1.13\times$
+        --- the pruning tables leave almost no room to improve.
+\end{enumerate}
+
+%============================================================================
+\section{Likely viva questions with beginner-friendly answers}
+\label{sec:viva}
+%============================================================================
+
+\paragraph{What is the main contribution?}
+Trying multiple Phase~1 endpoints and keeping the best combined
+solution.
+
+\paragraph{Why does that help?}
+Different Phase~1 endpoints can lead to Phase~2 sequences of different
+lengths, so taking the minimum of several tries gives shorter total
+solutions on average.
+
+\paragraph{What is the AI part doing?}
+Only ranking the 18 candidate moves at each search node, so the solver
+tries more promising moves first. It is not a solver by itself.
+
+\paragraph{Did the AI beat the classical solver?}
+No. In the final end-to-end benchmark the neural variant matches plain
+$K=5$ on solution quality and is marginally less reliable (solves one
+fewer cube within the 5-second budget).
+
+\paragraph{Then why include the AI part?}
+Because it answers an important research question: \emph{when} does
+learned move ordering help a classical solver, and \emph{when} does it
+not? The paper gives a precise, measurable answer.
+
+\paragraph{What is the practical recommendation?}
+Use multi-solution search, preferably $K=3$ (best $\leq$20-move rate)
+or $K=5$ (shortest mean solution). Skip neural move ordering unless you
+have a much bigger model budget and finer features.
+
+\paragraph{How big is the $K=5$ effect and is it statistically strong?}
+$-0.53$ moves on average, $p < 10^{-20}$, Cohen's $d_z = 0.79$, 95\%
+confidence interval $[0.44, 0.62]$ moves. Replicated across four seeds
+with a pooled $\Delta = 0.40 \pm 0.09$. Very strong.
+
+\paragraph{What is the anytime mode?}
+A $K=5$ solver with a user-specified time budget that returns the best
+solution found within the budget. Designed for interactive apps.
+
+\paragraph{What is a LUT and why is it useful?}
+A precomputed table of neural move rankings. It drops per-node
+inference cost from $\sim$16\,$\mu$s to $\sim$1.5\,$\mu$s, so
+inference cost stops being the bottleneck. The remaining bottleneck is
+that there is not much room to improve over Kociemba's pruning-table
+ordering.
+
+\paragraph{What is God's Number?}
+Twenty. The fewest moves needed to solve any cube using the optimal
+solver. This is why the paper tracks $\leq$20-move solution rate.
+
+\paragraph{What is the headroom, and why does it matter?}
+On 6\,000 walk-sampled states the oracle move ordering progresses
+65.2\% of the time while Kociemba's default progresses only 19.6\% of
+the time. That 0.456 gap implies a theoretical $\sim$10$\times$
+node-reduction ceiling. The neural MLP captures almost none of it:
+that is the paper's feature-resolution ceiling claim.
+
+\paragraph{Is this work reproducible?}
+Yes. Every number in the paper traces to a named JSON in
+\texttt{results/}, all the code is public, models are shipped, and
+scrambles are deterministic under the advertised random seeds.
+
+%============================================================================
+\section{What to focus on first}
+%============================================================================
+
+Do not try to absorb the math on first reading. The learning order is:
+
+\begin{enumerate}[leftmargin=2em]
+  \item What the paper is trying to improve (Kociemba's solver).
+  \item What Phase~1 and Phase~2 mean.
+  \item What $K$ means.
+  \item The headline numbers (Section~\ref{sec:headline}): 20.77 $\to$
+        20.23 and 28\% $\to$ 57.5\%.
+  \item Why the neural part does not help much (pruning tables are
+        strong; feature resolution is lossy).
+\end{enumerate}
+
+Once those five points feel natural, come back and read the
+statistical sections and the \texttt{h\_sort}/headroom discussion. Keep
+the memorised five lines handy during the viva --- most follow-up
+questions reduce to one of them.
+
+\end{document}

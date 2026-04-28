@@ -170,7 +170,7 @@ if 'results' not in st.session_state:
 st.title("Rubik's Cube Solver")
 st.markdown(
     "**Improving Rubik's Cube Solving with Neural-Guided Move Ordering in IDA*** "
-    "— Akash Chakraborty & Atul Chaudhuri "
+    "— Akash Chakraborty & Atal Chaudhuri "
     "*(Accepted: CIIR 2026, Springer LNNS)*"
 )
 

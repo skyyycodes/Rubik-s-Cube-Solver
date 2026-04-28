@@ -1,0 +1,380 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{array}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black,
+  pdftitle={Rubik's Cube Solver --- User Manual},
+  pdfauthor={Akash Chakraborty and Atal Chaudhuri},
+}
+
+\newcommand{\key}[1]{\fbox{\texttt{\strut#1}}}
+\newcommand{\app}{\textsc{RubiksCubeSolver}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\app{} --- User Manual}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\title{\vspace{-1.5em}\Huge \app\\[0.3em]\Large User Manual}
+\author{Akash Chakraborty \and Atal Chaudhuri\\[0.5em]
+\small Sister Nivedita University, Kolkata}
+\date{\today}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+\fbox{\parbox{0.85\textwidth}{\centering
+\textbf{About this manual.} This guide walks you through installing and
+using the \app{} application that ships as a single-file executable on
+Windows and a \texttt{.app} bundle on macOS. The application implements
+the algorithms described in \emph{Multi-Solution Search and the Limits
+of Neural Guidance in Rubik's Cube Solving}; this manual covers only the
+user-facing workflow, not the algorithmic details.
+}}
+\end{center}
+
+\vspace{1em}
+\tableofcontents
+\vspace{1em}
+
+%===========================================================================
+\section{What This Application Does}
+%===========================================================================
+
+\app{} is an interactive desktop tool that accepts a 3-by-3 Rubik's Cube
+state from the user and returns a move sequence that solves it. Under the
+hood it runs an enhanced version of Kociemba's Two-Phase Algorithm with
+four selectable solver modes:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Baseline (K=1)} --- the original Kociemba solver, fastest.
+  \item \textbf{Multi-Solution (K=5)} --- our primary contribution; explores five
+        Phase~1 endpoints and keeps the shortest combined solution. On
+        average cuts 0.53 moves off the baseline and roughly doubles the
+        fraction of $\leq$20-move solutions.
+  \item \textbf{Anytime (K=5, 2s)} --- the multi-solution solver with a 2-second
+        soft budget, returning the best solution found within the budget.
+        Designed for interactive applications where latency matters.
+  \item \textbf{Neural LUT (K=5)} --- multi-solution search augmented with a
+        precomputed lookup-table move ordering. Included for
+        completeness; quality matches plain K=5.
+\end{itemize}
+
+Input is either painted onto a 3D cube visualisation, loaded from one of
+four preset demo scrambles, or generated as a random scramble. Output is
+a human-readable move list that can also be played back one step at a
+time on the 3D view.
+
+%===========================================================================
+\section{Getting the Application}
+%===========================================================================
+
+\subsection{Windows}
+
+Download \texttt{RubiksCubeSolver.exe} (single file, roughly 50~MB).
+Double-click to launch. No Python or other dependencies are required;
+everything is bundled inside the executable.
+
+\textbf{First launch.} The first time you run the executable, Windows
+extracts bundled assets into a temporary directory. This takes a few
+seconds. Subsequent launches are faster.
+
+\textbf{SmartScreen warning.} Because the executable is unsigned, Windows
+Defender SmartScreen may show a blue warning dialog on first launch.
+Click \textit{More info} $\to$ \textit{Run anyway}.
+
+\subsection{macOS}
+
+Download \texttt{RubiksCubeSolver.app.zip}, double-click to unzip, and
+drag the resulting \texttt{RubiksCubeSolver.app} to your
+\texttt{Applications} folder.
+
+\textbf{First launch (Gatekeeper).} Because the app is unsigned, double-
+clicking it the first time will show \emph{``cannot be opened because
+Apple cannot check it for malicious software''}. Work around this by
+\emph{right-clicking} the app and choosing \textit{Open}; macOS will
+then show an Open button you can click through. Subsequent launches work
+from a normal double-click.
+
+%===========================================================================
+\section{The Main Window}
+%===========================================================================
+
+When you launch \app{} you see four panels laid out in a single window:
+
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{3D view (top-left).} A rotatable 3D rendering of the cube.
+        Left-drag to rotate, right-click a sticker to select it.
+  \item \textbf{2D unfolded net (top-middle).} The standard cross layout
+        showing all six faces at once. The currently selected sticker is
+        highlighted.
+  \item \textbf{Info panel (top-right).} Displays the selected sticker,
+        the current solver mode, the control reference, and (after a
+        solve) the move count and solution summary.
+  \item \textbf{Colour palette (bottom-left).} Six swatches: White, Red,
+        Blue, Yellow, Orange, Green. The currently selected colour is
+        highlighted.
+\end{itemize}
+
+Four yellow \textit{Demo} buttons and a \textit{Random Scramble} button
+sit near the bottom-right. A single-line status message at the bottom of
+the window shows the most recent action or result.
+
+%===========================================================================
+\section{Providing the Cube State}
+%===========================================================================
+
+There are four ways to tell the solver what cube to solve. Pick whichever
+is most convenient.
+
+\subsection{Demo scrambles (recommended for first-time users)}
+
+Click any of the four yellow \textit{Demo} buttons. Each loads a
+preselected valid cube state drawn from the paper's seed-42 benchmark.
+The 3D view and unfolded net update immediately and the status bar
+reports \textit{``Random scramble applied. Press Enter to solve!''}
+These are convenient for comparing the different solver modes on
+identical input: load the same demo twice, solve once with each mode,
+and compare the move counts.
+
+\subsection{Random scramble}
+
+Click \textit{Random Scramble} (or press \key{S}) to apply 20--30 random
+moves to a solved cube. The result is a valid, uniformly distributed
+scramble. Use this when you want a fresh, unpredictable cube.
+
+\subsection{Painting stickers manually}
+
+If you want to solve a specific physical cube in your hand, you can
+paint the state one sticker at a time:
+
+\begin{enumerate}[leftmargin=2em]
+  \item Orient your physical cube with \textbf{blue on top, red facing you, yellow on the right}
+        (the orientation shown in the app's header text).
+  \item Click a sticker on the 3D view or unfolded net to select it. The
+        selected sticker is highlighted.
+  \item Pick a colour, either by clicking a swatch in the palette or by
+        pressing a digit \key{1}--\key{6} (1:W, 2:R, 3:B, 4:Y, 5:O, 6:G).
+        The selected sticker repaints instantly.
+  \item Press \key{Tab} / \key{Shift+Tab} to advance to the next /
+        previous face, or use the arrow keys to move within a face.
+\end{enumerate}
+
+Centre stickers are locked to prevent a common input error (they define
+which colour belongs to which face and must match the physical cube's
+orientation).
+
+\subsection{Guided mode}
+
+Press \key{G} to toggle \textit{guided mode}, which walks you through
+the cube sticker by sticker in a fixed order. Useful the first time you
+enter a cube by hand --- each press of a number key paints the current
+sticker and advances automatically. Press \key{G} again to leave guided
+mode.
+
+%===========================================================================
+\section{Choosing a Solver Mode}
+%===========================================================================
+
+The info panel shows the currently active solver mode below the cursor
+position. Press \key{M} to cycle through the four modes:
+
+\begin{center}
+\begin{tabular}{@{}ll p{0.50\textwidth}@{}}
+\toprule
+\textbf{Mode} & \textbf{Label} & \textbf{What it does} \\
+\midrule
+1 & Baseline (K=1)        & Kociemba's original solver. Very fast
+                            ($\sim$10~ms on this build), slightly longer solutions. \\
+2 & Multi-Solution (K=5)  & Our primary algorithm: tries 5 Phase 1
+                            endpoints, returns the shortest. Default mode. \\
+3 & Anytime (K=5, 2s)     & Multi-solution search that always returns within
+                            2~seconds using the best solution found so far. \\
+4 & Neural LUT (K=5)      & Multi-solution search with a lookup-table move
+                            predictor. Quality matches K=5. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The \textbf{default mode is Multi-Solution (K=5)}. If you are just trying
+to solve a cube quickly and do not care about the algorithmic
+comparison, leave this alone.
+
+%===========================================================================
+\section{Solving the Cube}
+%===========================================================================
+
+Once a valid cube state is in place, press \key{Enter}. The solver runs
+on the current mode. Depending on the mode, a solve takes between
+$\sim$10~ms (baseline) and $\sim$15~s (K=5 on a hard cube). During a
+solve the window is unresponsive; wait for the status bar to update.
+
+When the solve completes:
+
+\begin{itemize}[leftmargin=2em]
+  \item The info panel shows the mode used, the move count, and the
+        solution string.
+  \item The status bar at the bottom reports success or failure.
+  \item If no solution could be found within the internal time cap
+        (15~s for K=5, 2~s for Anytime), you will see
+        \textit{``Error: Timeout, no solution within given time.''}
+        Re-running the solve or switching to Baseline almost always works.
+\end{itemize}
+
+\subsection{Stepping through the solution}
+
+Press \key{N} to advance one move. The 3D view animates the rotation and
+the status bar describes the move in plain English (for example
+\textit{``U prime: top face counter-clockwise''}). Keep pressing \key{N}
+until the cube is solved. This is the core feature for using the app as
+a physical solver: make the move on your cube, then press \key{N} for
+the next one.
+
+\subsection{Comparing two modes on the same cube}
+
+A common demonstration workflow:
+
+\begin{enumerate}[leftmargin=2em]
+  \item Click \textit{Demo 1} to load a fixed scramble.
+  \item Press \key{M} until the info panel reads \textit{Baseline (K=1)}.
+  \item Press \key{Enter}. Note the move count (e.g. 21).
+  \item Click \textit{Demo 1} again to reset the same cube.
+  \item Press \key{M} until the info panel reads \textit{Multi-Solution (K=5)}.
+  \item Press \key{Enter}. Note the move count (e.g. 18).
+\end{enumerate}
+
+The 3-move saving on Demo~1 and Demo~2, or 2-move saving on Demo~3 and
+Demo~4, is the visible, reproducible demonstration of our contribution
+on a single cube. Across 200 random cubes the mean saving is 0.53
+moves ($p < 10^{-20}$, paired test).
+
+%===========================================================================
+\section{Keyboard and Mouse Reference}
+%===========================================================================
+
+\subsection{Solving and mode}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Key} & \textbf{Action} \\
+\midrule
+\key{Enter}  & Solve the current cube with the active mode. \\
+\key{N}      & Step to the next move in the solution. \\
+\key{M}      & Cycle through the four solver modes. \\
+\key{R}      & Reset the cube to solved. \\
+\key{S}      & Apply a random scramble (equivalent to the button). \\
+\key{Q}      & Quit the application. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Input and navigation}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Key} & \textbf{Action} \\
+\midrule
+\key{Tab}          & Move to the next face. \\
+\key{Shift+Tab}    & Move to the previous face. \\
+\key{$\uparrow$} \key{$\downarrow$} \key{$\leftarrow$} \key{$\rightarrow$}
+                   & Move the cursor within the current face. \\
+\key{1}--\key{6}   & Paint the selected sticker with the corresponding colour. \\
+\key{G}            & Toggle guided-mode input. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Mouse}
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Left-drag on the 3D view:} rotate the view.
+  \item \textbf{Click on a sticker (3D or 2D):} select that sticker.
+  \item \textbf{Click on a colour swatch:} set the selected colour.
+  \item \textbf{Click a Demo or Random Scramble button:} load a scramble.
+\end{itemize}
+
+%===========================================================================
+\section{Troubleshooting}
+%===========================================================================
+
+\paragraph{``Windows protected your PC'' dialog on first launch.}
+The executable is unsigned. Click \textit{More info} $\to$ \textit{Run
+anyway}. Subsequent launches do not show this.
+
+\paragraph{``Cannot be opened because Apple cannot check it'' on macOS.}
+Right-click the \texttt{.app} and choose \textit{Open}. Then click
+\textit{Open} in the follow-up dialog. This is a one-time click-through.
+
+\paragraph{The app takes five seconds to show its window on Windows.}
+Expected. PyInstaller single-file executables extract their contents to
+a temporary folder on first launch, which takes a few seconds. The
+window appears as soon as extraction finishes.
+
+\paragraph{``Error: Timeout, no solution within given time.''}
+The current cube is hard enough that the solver did not complete within
+the mode's time cap. Options:
+\begin{itemize}[leftmargin=2em]
+  \item Press \key{M} to switch to Baseline and press \key{Enter} again
+        --- Baseline uses the C backend and solves in milliseconds.
+  \item Click the same Demo button again to reload the cube, then
+        retry; solve time varies slightly run-to-run.
+\end{itemize}
+
+\paragraph{``Cannot change center piece!''}
+Centre stickers are locked because they define which colour is assigned
+to which face. If the physical cube you are entering has a different
+centre colour arrangement than what the app shows, re-orient the physical
+cube to match (blue on top, red facing you, yellow on the right).
+
+\paragraph{The 3D view and the unfolded net look out of sync.}
+They are always derived from the same internal state. If they look
+different, the most likely explanation is that the 3D view has been
+rotated --- only the camera changed, not the cube. Left-drag to rotate
+it back.
+
+\paragraph{I pressed Enter and nothing happens.}
+Check the status bar. If it shows an error about colour counts, the
+painted cube is invalid (there must be exactly nine stickers of each
+colour). Use \key{R} to reset and try again, or click a Demo button to
+load a known-valid state.
+
+%===========================================================================
+\section{Where the Algorithm Comes From}
+%===========================================================================
+
+The solver logic and the four modes correspond directly to sections of
+the accompanying paper, \emph{Multi-Solution Search and the Limits of
+Neural Guidance in Rubik's Cube Solving}. Readers who want the
+algorithmic detail behind a given mode should consult:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Mode in app} & \textbf{Paper section} \\
+\midrule
+Baseline (K=1)        & Section 2.2 (Two-Phase Algorithm) \\
+Multi-Solution (K=5)  & Section 4.3 and Algorithm 1 \\
+Anytime (K=5, 2s)     & Section 4.4 \\
+Neural LUT (K=5)      & Section 4.5 and Section 6.8 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+This user manual does not duplicate that material. If you just want to
+solve a cube, everything you need is in Sections 1--7 above.
+
+\end{document}

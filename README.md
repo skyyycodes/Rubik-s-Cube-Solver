@@ -2,7 +2,7 @@
 
 > **Research paper:** *Multi-Solution Search and the Limits of Neural Guidance in Rubik's Cube Solving*
 > Accepted at **CIIR 2026** (Springer LNNS series) — Paper ID 890
-> Authors: Akash Chakraborty & Atul Chaudhuri, Sister Nivedita University, Kolkata
+> Authors: Akash Chakraborty & Atal Chaudhuri, Sister Nivedita University, Kolkata
 
 This repository contains **everything** needed to reproduce the research paper: the enhanced solver, all training pipelines, benchmarks, frozen result artifacts, figure generation, and three interactive front-ends (camera, 3D GUI, web app).
 
